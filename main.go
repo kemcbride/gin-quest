@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"embed"
-  "net/http"
+	"net/http"
 	"strconv"
 	"strings"
 
-  "github.com/gin-contrib/static"
-  "github.com/gin-gonic/gin"
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 )
 
 //go:embed static
@@ -47,21 +47,21 @@ func deserializeGameState(s string) GameState {
 }
 
 func main() {
-  // Create a Gin router with default middleware (logger and recovery)
-  r := gin.Default()
+	// Create a Gin router with default middleware (logger and recovery)
+	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
 	if err != nil {
 		panic(err)
 	}
 
-  // Define a simple GET endpoint
-  r.GET("/gin-quest/ping", func(c *gin.Context) {
-    // Return JSON response
-    c.JSON(http.StatusOK, gin.H{
-      "message": "pong",
-    })
-  })
+	// Define a simple GET endpoint
+	r.GET("/gin-quest/ping", func(c *gin.Context) {
+		// Return JSON response
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
 	r.GET("/gin-quest", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Hello World Index",
@@ -105,7 +105,7 @@ func main() {
 	// 	c.Redirect(http.StatusMovedPermanently, "/gin-quest")
 	// })
 
-  // Start server on port 8080 (default)
-  // Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
-  r.Run()
+	// Start server on port 8080 (default)
+	// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
+	r.Run()
 }
