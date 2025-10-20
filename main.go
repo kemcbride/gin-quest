@@ -46,9 +46,19 @@ func deserializeGameState(s string) GameState {
 	}
 }
 
+func (gs *GameState) AddX(a int) int {
+	return gs.x + a
+}
+
+func (gs *GameState) AddY(a int) int {
+	return gs.y + a
+}
+
+
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
+
 	r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
 	if err != nil {
@@ -72,7 +82,7 @@ func main() {
 
 		gs := GameState{}
 		cookie, err := c.Cookie("game")
-		if err != nil {
+		if _, reset := c.GetQuery("reset"); (err != nil) || reset {
 			cookie = "0,0,0"
 			c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
 		} 
@@ -95,10 +105,11 @@ func main() {
 			"x": gs.x,
 			"y": gs.y,
 			"room": gs.room,
+			"gs": &gs,
 		})
 	})
 	// Serve static stuff so we can template it into html, etc
-	r.Use(static.Serve("/static/", fs))
+	r.Use(static.Serve("/gin-quest/static/", fs))
 
 	// r.NoRoute(func(c *gin.Context) {
 	// 	fmt.Printf("%s doesn't exist, redirect on /\n", c.Request.URL.Path)

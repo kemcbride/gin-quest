@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link src="static/main.css" rel="stylesheet" />
+		<link href="http://kemcbride.noho.st/gin-quest/static/main.css" rel="stylesheet" />
 		<title> {{ .title }} </title>
 	</head>
 
@@ -11,15 +11,35 @@
 		<h2> {{ .x }}, {{ .y }}, {{ .room }} </h2>
 
 		<div class="container">
-			<div> 1 </div>
-			<div> 2 </div>
-			<div> 3 </div>
-			<div> 4 </div>
-			<div> 5 </div>
-			<div> 6 </div>
-			<div> 7 </div>
-			<div> 8 </div>
-			<div> 9 </div>
+				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY -2 }} </div>
+				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY -2 }} </div>
+				<div> {{ .x }}, {{ .gs.AddY -2 }} </div>
+				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY -2 }} </div>
+				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY -2 }} </div>
+
+				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY -1 }} </div>
+				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY -1 }} </div>
+				<div> {{ .x }}, {{ .gs.AddY -1 }} </div>
+				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY -1 }} </div>
+				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY -1 }} </div>
+
+				<div> {{ .gs.AddX -2 }}, {{ .y }} </div>
+				<div> {{ .gs.AddX -1 }}, {{ .y }} </div>
+				<div> {{ .x }}, {{ .y }} </div>
+				<div> {{ .gs.AddX 1 }}, {{ .y }} </div>
+				<div> {{ .gs.AddX 2 }}, {{ .y }} </div>
+
+				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY 1 }} </div>
+				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY 1 }} </div>
+				<div> {{ .x }}, {{ .gs.AddY 1 }} </div>
+				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY 1 }} </div>
+				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY 1 }} </div>
+
+				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY 2 }} </div>
+				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY 2 }} </div>
+				<div> {{ .x }}, {{ .gs.AddY 2 }} </div>
+				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY 2 }} </div>
+				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY 2 }} </div>
 		</div>
 	</body>
 </html>
