@@ -54,6 +54,35 @@ func (gs *GameState) AddY(a int) int {
 	return gs.y + a
 }
 
+func Game(c *gin.Context) {
+	gs := GameState{}
+	cookie, err := c.Cookie("game")
+	if _, reset := c.GetQuery("reset"); (err != nil) || reset {
+		cookie = "0,0,0"
+		c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
+	}
+	gs = deserializeGameState(cookie)
+	// Let's check the query path and respond to up, down, left, right.
+	if _, up := c.GetQuery("up"); up {
+		gs.y--
+	} else if _, down := c.GetQuery("down"); down {
+		gs.y++
+	}
+	if _, left := c.GetQuery("left"); left {
+		gs.x--
+	} else if _, right := c.GetQuery("right"); right {
+		gs.x++
+	}
+	c.SetCookie("game", serializeGameState(gs), cookieAge, "/", domain, false, true)
+
+	c.HTML(http.StatusOK, "game.html", gin.H{
+		"title": "Game Page",
+		"x": gs.x,
+		"y": gs.y,
+		"room": gs.room,
+		"gs": &gs,
+	})
+}
 
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
@@ -72,42 +101,14 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.GET("/gin-quest", func(c *gin.Context) {
+	r.GET("/gin-quest/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Hello World Index",
 		})
 	})
 
-	r.GET("/gin-quest/game", func(c *gin.Context) {
-
-		gs := GameState{}
-		cookie, err := c.Cookie("game")
-		if _, reset := c.GetQuery("reset"); (err != nil) || reset {
-			cookie = "0,0,0"
-			c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
-		} 
-		gs = deserializeGameState(cookie)
-		// Let's check the query path and respond to up, down, left, right.
-		if _, up := c.GetQuery("up"); up {
-			gs.y--
-		} else if _, down := c.GetQuery("down"); down {
-			gs.y++
-		}
-		if _, left := c.GetQuery("left"); left {
-			gs.x--
-		} else if _, right := c.GetQuery("right"); right {
-			gs.x++
-		}
-		c.SetCookie("game", serializeGameState(gs), cookieAge, "/", domain, false, true)
-
-		c.HTML(http.StatusOK, "game.html", gin.H{
-			"title": "Game Page",
-			"x": gs.x,
-			"y": gs.y,
-			"room": gs.room,
-			"gs": &gs,
-		})
-	})
+	r.GET("/gin-quest/game", Game)
+	r.GET("/gin-quest/", Game)
 	// Serve static stuff so we can template it into html, etc
 	r.Use(static.Serve("/gin-quest/static/", fs))
 
