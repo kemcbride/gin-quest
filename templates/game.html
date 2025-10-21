@@ -10,36 +10,15 @@
 
 		<h2> {{ .x }}, {{ .y }}, {{ .room }} </h2>
 
+		{{ $xs := .xrange }}
+		{{ $ys := .yrange }}
+		{{ $gs := .gs }}
 		<div class="container">
-				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY -2 }} </div>
-				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY -2 }} </div>
-				<div> {{ .x }}, {{ .gs.AddY -2 }} </div>
-				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY -2 }} </div>
-				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY -2 }} </div>
-
-				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY -1 }} </div>
-				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY -1 }} </div>
-				<div> {{ .x }}, {{ .gs.AddY -1 }} </div>
-				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY -1 }} </div>
-				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY -1 }} </div>
-
-				<div> {{ .gs.AddX -2 }}, {{ .y }} </div>
-				<div> {{ .gs.AddX -1 }}, {{ .y }} </div>
-				<div> {{ .x }}, {{ .y }} </div>
-				<div> {{ .gs.AddX 1 }}, {{ .y }} </div>
-				<div> {{ .gs.AddX 2 }}, {{ .y }} </div>
-
-				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY 1 }} </div>
-				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY 1 }} </div>
-				<div> {{ .x }}, {{ .gs.AddY 1 }} </div>
-				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY 1 }} </div>
-				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY 1 }} </div>
-
-				<div> {{ .gs.AddX -2 }}, {{ .gs.AddY 2 }} </div>
-				<div> {{ .gs.AddX -1 }}, {{ .gs.AddY 2 }} </div>
-				<div> {{ .x }}, {{ .gs.AddY 2 }} </div>
-				<div> {{ .gs.AddX 1 }}, {{ .gs.AddY 2 }} </div>
-				<div> {{ .gs.AddX 2 }}, {{ .gs.AddY 2 }} </div>
+		{{ range $xr := $xs }}
+		  {{ range $yr := $ys }}
+				<div class="{{ $gs.GetGridLocClass $xr $yr }}"> {{ $xr }}, {{ $yr }} </div>
+			{{ end }}
+		{{ end }}
 		</div>
 	</body>
 </html>

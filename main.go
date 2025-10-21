@@ -22,6 +22,7 @@ type GameState struct {
 	x int
 	y int
 	room int
+	currGrid []string
 }
 
 func serializeGameState(g GameState) string {
@@ -46,6 +47,14 @@ func deserializeGameState(s string) GameState {
 	}
 }
 
+func (gs *GameState) GetX() int {
+	return gs.x
+}
+
+func (gs *GameState) GetY() int {
+	return gs.y
+}
+
 func (gs *GameState) AddX(a int) int {
 	return gs.x + a
 }
@@ -54,7 +63,65 @@ func (gs *GameState) AddY(a int) int {
 	return gs.y + a
 }
 
+func (gs *GameState) GetGrid() []string {
+	return gs.currGrid
+}
+
+func (gs *GameState) SetGrid(grid []string) {
+	gs.currGrid = grid
+}
+
+func (gs *GameState) GetGridLoc(x int, y int) string {
+	adjustedX := max(0, len(gs.currGrid[0]) / 2 + x)
+	adjustedY := max(0, len(gs.currGrid) / 2 + y)
+	loc := gs.GetGrid()[adjustedY][adjustedX]
+	return string(loc)
+}
+
+func (gs *GameState) GetGridLocColor(x int, y int) string {
+	var colorMap = map[string]string{
+		".": "#FFE4B5",
+		"^": "#444444",
+		"~": "#4682B4",
+		"#": "#9ACD32",
+	}
+	return colorMap[gs.GetGridLoc(x, y)]
+}
+
+func (gs *GameState) GetGridLocClass(x int, y int) string {
+	var classMap = map[string]string{
+		".": "desert",
+		"^": "mountain",
+		"~": "water",
+		"#": "grass",
+	}
+	return classMap[gs.GetGridLoc(x, y)]
+}
+
+func (gs *GameState) GetMapRange(coord int) []int {
+	var coordRange []int
+	for i := coord - 2; i < coord + 3; i++ {
+		coordRange = append(coordRange, i)
+	}
+	return coordRange
+}
+
+func loadMap() []string {
+	file, err := server.ReadFile("static/map-mh04dw5i.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	var grid []string
+	lines := strings.Split(string(file), "\n")
+	for _, line := range lines {
+		grid = append(grid, line)
+	}
+	return grid
+}
+
 func Game(c *gin.Context) {
+	grid := loadMap()
 	gs := GameState{}
 	cookie, err := c.Cookie("game")
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset {
@@ -62,6 +129,7 @@ func Game(c *gin.Context) {
 		c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
 	}
 	gs = deserializeGameState(cookie)
+	gs.SetGrid(grid)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.y--
@@ -81,6 +149,8 @@ func Game(c *gin.Context) {
 		"y": gs.y,
 		"room": gs.room,
 		"gs": &gs,
+		"xrange": gs.GetMapRange(gs.x),
+		"yrange": gs.GetMapRange(gs.y),
 	})
 }
 
