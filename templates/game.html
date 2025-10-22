@@ -14,10 +14,18 @@
 		{{ $ys := .yrange }}
 		{{ $gs := .gs }}
 		<div class="container">
+		{{ range $yr := $ys }}
 		{{ range $xr := $xs }}
-		  {{ range $yr := $ys }}
-				<div class="{{ $gs.GetGridLocClass $xr $yr }}"> {{ $xr }}, {{ $yr }} </div>
-			{{ end }}
+		{{ if eq $xr $gs.GetX }}
+		{{ if eq $yr $gs.GetY }}
+			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> X </div>
+		{{ else }}
+			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> </div>
+		{{ end }}
+		{{ else }}
+			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> </div>
+		{{ end }}
+		{{ end }}
 		{{ end }}
 		</div>
 	</body>
