@@ -6,8 +6,6 @@
 	</head>
 
 	<body>
-		<h1> {{ .title }} </h1>
-
 		<h2> {{ .x }}, {{ .y }}, {{ .room }} </h2>
 
 		{{ $xs := .xrange }}
@@ -28,5 +26,26 @@
 		{{ end }}
 		{{ end }}
 		</div>
+
+		<div class="controls">
+			<div> </div>
+			<div class="dir" onclick="window.location.href='.?up';">
+				↑
+			</div>
+			<div> </div>
+			<div class="dir" onclick="window.location.href='.?left';">
+				←
+			</div>
+			<div> </div>
+			<div class="dir" onclick="window.location.href='.?right';">
+				→
+			</div>
+			<div> </div>
+			<div class="dir" onclick="window.location.href='.?down';">
+				↓
+			</div>
+			<div> </div>
+		</div>
+
 	</body>
 </html>

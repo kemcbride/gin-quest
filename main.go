@@ -107,7 +107,7 @@ func (gs *GameState) GetMapRange(coord int) []int {
 }
 
 func loadMap() []string {
-	file, err := server.ReadFile("static/map-mh04dw5i.txt")
+	file, err := server.ReadFile("static/map-mh04i224.txt")
 	if err != nil {
 		panic(err)
 	}
