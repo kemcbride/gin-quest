@@ -233,6 +233,16 @@ func Game(c *gin.Context) {
 	})
 }
 
+func staticCacheMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// From https://github.com/gin-gonic/gin/issues/3675
+		if strings.HasPrefix(c.Request.URL.Path, "/gin-quest/static/") {
+			c.Header("Cache-Control", "private, max-age=86400")
+		}
+		c.Next()
+	}
+}
+
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
@@ -259,6 +269,8 @@ func main() {
 
 	r.GET("/gin-quest/game", Game)
 	r.GET("/gin-quest/", Game)
+
+	r.Use(staticCacheMiddleware())
 	// Serve static stuff so we can template it into html, etc
 	r.Use(static.Serve("/gin-quest/static/", fs))
 
