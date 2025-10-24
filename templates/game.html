@@ -16,7 +16,9 @@
 		{{ range $xr := $xs }}
 		{{ if eq $xr $gs.GetX }}
 		{{ if eq $yr $gs.GetY }}
-			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> X </div>
+			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> 
+				<img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
+			</div>
 		{{ else }}
 			<div class="{{ $gs.GetGridLocClass $xr $yr }}"> </div>
 		{{ end }}
@@ -27,24 +29,29 @@
 		{{ end }}
 		</div>
 
-		<div class="controls">
-			<div> </div>
-			<div class="dir" onclick="window.location.href='.?up';">
-				↑
+		<div class="menu">
+			<div class="controls">
+				<div> </div>
+				<div class="dir" onclick="window.location.href='.?up';">
+					↑
+				</div>
+				<div> </div>
+				<div class="dir" onclick="window.location.href='.?left';">
+					←
+				</div>
+				<div> </div>
+				<div class="dir" onclick="window.location.href='.?right';">
+					→
+				</div>
+				<div> </div>
+				<div class="dir" onclick="window.location.href='.?down';">
+					↓
+				</div>
+				<div> </div>
 			</div>
-			<div> </div>
-			<div class="dir" onclick="window.location.href='.?left';">
-				←
-			</div>
-			<div> </div>
-			<div class="dir" onclick="window.location.href='.?right';">
-				→
-			</div>
-			<div> </div>
-			<div class="dir" onclick="window.location.href='.?down';">
-				↓
-			</div>
-			<div> </div>
+			<div class="character">
+				<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
+			<div>
 		</div>
 
 	</body>
