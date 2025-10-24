@@ -18,6 +18,12 @@ const cookieAge int = 3600 * 24 * 7 // 1 week?
 const domain string = "kemcbride.noho.st"
 
 
+type Room struct {
+	Id int
+	Name string
+	Path string
+}
+
 type GameState struct {
 	x int
 	y int
@@ -63,6 +69,49 @@ func (gs *GameState) AddY(a int) int {
 	return gs.y + a
 }
 
+func (gs *GameState) CanMove(dx int, dy int) bool {
+	// For now, we just want to check if it's water or mountain
+	// Or, the edge of the map.
+	// Eventually could handle a case where we fly or swim.
+	loc := gs.GetGridLoc(dx, dy)
+	switch loc {
+	case	".":
+		return true
+	case "^":
+		return false
+	case "~":
+		return false
+	case "Q": // placeholder for edge of map?
+		return false
+	default:
+		return true
+	}
+}
+
+func (gs *GameState) MoveUp() {
+	if gs.CanMove(gs.x, gs.y-1) {
+		gs.y--;
+	}
+}
+
+func (gs *GameState) MoveDown() {
+	if gs.CanMove(gs.x, gs.y+1) {
+		gs.y++;
+	}
+}
+
+func (gs *GameState) MoveLeft() {
+	if gs.CanMove(gs.x-1, gs.y) {
+		gs.x--;
+	}
+}
+
+func (gs *GameState) MoveRight() {
+	if gs.CanMove(gs.x+1, gs.y) {
+		gs.x++;
+	}
+}
+
 func (gs *GameState) GetGrid() []string {
 	return gs.currGrid
 }
@@ -74,6 +123,10 @@ func (gs *GameState) SetGrid(grid []string) {
 func (gs *GameState) GetGridLoc(x int, y int) string {
 	adjustedX := max(0, len(gs.currGrid[0]) / 2 + x)
 	adjustedY := max(0, len(gs.currGrid) / 2 + y)
+	// Dumb exit to send weird letter we can map to some style
+	if ( adjustedX < 0 || adjustedX >= len(gs.currGrid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.currGrid) ) {
+		return "Q"
+	}
 	loc := gs.GetGrid()[adjustedY][adjustedX]
 	return string(loc)
 }
@@ -84,6 +137,7 @@ func (gs *GameState) GetGridLocColor(x int, y int) string {
 		"^": "#444444",
 		"~": "#4682B4",
 		"#": "#9ACD32",
+		"Q": "#000000",
 	}
 	return colorMap[gs.GetGridLoc(x, y)]
 }
@@ -94,8 +148,29 @@ func (gs *GameState) GetGridLocClass(x int, y int) string {
 		"^": "mountain",
 		"~": "water",
 		"#": "grass",
+		"Q": "abyss",
 	}
 	return classMap[gs.GetGridLoc(x, y)]
+}
+
+func (gs *GameState) GetRoomHash() map[int]Room {
+	var roomMap = map[int]Room {
+		0: Room{Id: 0, Name: "Eunicia", Path: "map-mh04i224.txt"},
+		1: Room{Id: 1, Name: "Patricon", Path: "map-mh04dw5i.txt"},
+	}
+	return roomMap
+}
+
+func (gs *GameState) GetRoom(i int) Room {
+	return gs.GetRoomHash()[i]
+}
+
+func (gs *GameState) GetCurrRoom() Room {
+	return gs.GetRoomHash()[gs.room]
+}
+
+func (gs *GameState) GetCurrRoomName() string {
+	return gs.GetRoomHash()[gs.room].Name
 }
 
 func (gs *GameState) GetMapRange(coord int) []int {
@@ -106,8 +181,8 @@ func (gs *GameState) GetMapRange(coord int) []int {
 	return coordRange
 }
 
-func loadMap() []string {
-	file, err := server.ReadFile("static/map-mh04i224.txt")
+func loadMap(roomPath string) []string {
+	file, err := server.ReadFile(fmt.Sprintf("static/%s", roomPath))
 	if err != nil {
 		panic(err)
 	}
@@ -121,25 +196,25 @@ func loadMap() []string {
 }
 
 func Game(c *gin.Context) {
-	grid := loadMap()
-	gs := GameState{}
 	cookie, err := c.Cookie("game")
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset {
 		cookie = "0,0,0"
 		c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
 	}
-	gs = deserializeGameState(cookie)
+
+	gs := deserializeGameState(cookie)
+	grid := loadMap(gs.GetCurrRoom().Path)
 	gs.SetGrid(grid)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
-		gs.y--
+		gs.MoveUp()
 	} else if _, down := c.GetQuery("down"); down {
-		gs.y++
+		gs.MoveDown()
 	}
 	if _, left := c.GetQuery("left"); left {
-		gs.x--
+		gs.MoveLeft()
 	} else if _, right := c.GetQuery("right"); right {
-		gs.x++
+		gs.MoveRight()
 	}
 	c.SetCookie("game", serializeGameState(gs), cookieAge, "/", domain, false, true)
 
