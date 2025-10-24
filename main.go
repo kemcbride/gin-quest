@@ -53,6 +53,10 @@ func deserializeGameState(s string) GameState {
 	}
 }
 
+func (gs *GameState) GetStatusBlurb() string {
+	return "Status: All good!"
+}
+
 func (gs *GameState) GetX() int {
 	return gs.x
 }
@@ -155,8 +159,8 @@ func (gs *GameState) GetGridLocClass(x int, y int) string {
 
 func (gs *GameState) GetRoomHash() map[int]Room {
 	var roomMap = map[int]Room {
-		0: Room{Id: 0, Name: "Eunicia", Path: "map-mh04i224.txt"},
-		1: Room{Id: 1, Name: "Patricon", Path: "map-mh04dw5i.txt"},
+		0: Room{Id: 0, Name: "Continent of Euniciar", Path: "map-mh04i224.txt"},
+		1: Room{Id: 1, Name: "Land of Patricolia", Path: "map-mh04dw5i.txt"},
 	}
 	return roomMap
 }
@@ -232,6 +236,7 @@ func Game(c *gin.Context) {
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
+	r.SetTrustedProxies(nil)  // Only allow our own clientIP
 
 	r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
