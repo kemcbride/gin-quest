@@ -17,7 +17,7 @@ type GameState struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 	Room int `json:"room"`
-	currGrid []string `json:"curr_grid,omitempty"`
+	CurrGrid []string `json:"curr_grid,omitempty"`
 }
 
 func SerializeGameState(g GameState) string {
@@ -117,22 +117,14 @@ func (gs *GameState) MoveRight() {
 	}
 }
 
-func (gs *GameState) GetGrid() []string {
-	return gs.currGrid
-}
-
-func (gs *GameState) SetGrid(grid []string) {
-	gs.currGrid = grid
-}
-
 func (gs *GameState) GetGridLoc(x int, y int) string {
-	adjustedX := max(0, len(gs.currGrid[0]) / 2 + x)
-	adjustedY := max(0, len(gs.currGrid) / 2 + y)
+	adjustedX := max(0, len(gs.CurrGrid[0]) / 2 + x)
+	adjustedY := max(0, len(gs.CurrGrid) / 2 + y)
 	// Dumb exit to send weird letter we can map to some style
-	if ( adjustedX < 0 || adjustedX >= len(gs.currGrid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.currGrid) ) {
+	if ( adjustedX < 0 || adjustedX >= len(gs.CurrGrid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.CurrGrid) ) {
 		return "Q"
 	}
-	loc := gs.GetGrid()[adjustedY][adjustedX]
+	loc := gs.CurrGrid[adjustedY][adjustedX]
 	return string(loc)
 }
 

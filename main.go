@@ -50,8 +50,7 @@ func Game(c *gin.Context) {
 			Y: 0,
 			Room: 0,
 		}
-		grid := loadMap(gs.GetCurrRoom().Path)
-		gs.SetGrid(grid)
+		gs.CurrGrid = loadMap(gs.GetCurrRoom().Path)
 
 		blankGameJson, err := blankGame.ToJson()
 		if err != nil {
@@ -61,9 +60,7 @@ func Game(c *gin.Context) {
 		c.SetCookie("game", string(blankGameJson), cookieAge, "/", domain, false, true)
 	}
 
-	// It shouldn't be erroring here?
-	grid := loadMap(gs.GetCurrRoom().Path)
-	gs.SetGrid(grid)
+	gs.CurrGrid = loadMap(gs.GetCurrRoom().Path)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.MoveUp()
