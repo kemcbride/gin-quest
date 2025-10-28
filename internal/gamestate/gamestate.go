@@ -2,6 +2,7 @@ package gamestate
 
 import (
 	"fmt"
+	"encoding/json"
 	"strings"
 	"strconv"
 )
@@ -13,17 +14,17 @@ type Room struct {
 }
 
 type GameState struct {
-	x int
-	y int
-	room int
-	currGrid []string
+	X int `json:"x"`
+	Y int `json:"y"`
+	Room int `json:"room"`
+	currGrid []string `json:"curr_grid,omitempty"`
 }
 
 func SerializeGameState(g GameState) string {
-	return fmt.Sprintf("%d,%d,%d", g.x, g.y, g.room)
+	return fmt.Sprintf("%d,%d,%d", g.X, g.Y, g.Room)
 }
 
-func DeserializeGameState(s string) GameState {
+func DeserializeGameState(s string) *GameState {
 	segments := strings.Split(s, ",")
 	var values [3]int
 	for i, seg := range segments {
@@ -34,34 +35,46 @@ func DeserializeGameState(s string) GameState {
 		}
 		values[i] = val
 	}
-	return GameState{
-		x: values[0],
-		y: values[1],
-		room: values[2],
+	return &GameState{
+		X: values[0],
+		Y: values[1],
+		Room: values[2],
 	}
 }
 
-func (gs GameState) GetStatusBlurb() string {
+// json serialization as methods
+func (gs *GameState) ToJson() ([]byte, error) {
+	j, err := json.Marshal(gs)
+	if err != nil {
+		return []byte{}, err
+	}
+	return j, nil
+}
+
+func FromJson(b []byte) (*GameState, error) {
+	gs := &GameState{}
+	err := json.Unmarshal(b, &gs)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling gamestate: %v, %s", err, b)
+	}
+	return gs, nil
+}
+
+// Stringer
+func (gs *GameState) String() string {
+	j, err := json.Marshal(gs)
+	if err != nil {
+		// TODO be better - this is lazy
+		panic(err)
+	}
+	return string(j)
+}
+
+func (gs *GameState) GetStatusBlurb() string {
 	return "Status: All good!"
 }
 
-func (gs GameState) GetX() int {
-	return gs.x
-}
-
-func (gs GameState) GetY() int {
-	return gs.y
-}
-
-func (gs *GameState) AddX(a int) int {
-	return gs.x + a
-}
-
-func (gs *GameState) AddY(a int) int {
-	return gs.y + a
-}
-
-func (gs GameState) CanMove(dx int, dy int) bool {
+func (gs *GameState) CanMove(dx int, dy int) bool {
 	// For now, we just want to check if it's water or mountain
 	// Or, the edge of the map.
 	// Eventually could handle a case where we fly or swim.
@@ -81,30 +94,30 @@ func (gs GameState) CanMove(dx int, dy int) bool {
 }
 
 func (gs *GameState) MoveUp() {
-	if gs.CanMove(gs.x, gs.y-1) {
-		gs.y--;
+	if gs.CanMove(gs.X, gs.Y-1) {
+		gs.Y--;
 	}
 }
 
 func (gs *GameState) MoveDown() {
-	if gs.CanMove(gs.x, gs.y+1) {
-		gs.y++;
+	if gs.CanMove(gs.X, gs.Y+1) {
+		gs.Y++;
 	}
 }
 
 func (gs *GameState) MoveLeft() {
-	if gs.CanMove(gs.x-1, gs.y) {
-		gs.x--;
+	if gs.CanMove(gs.X-1, gs.Y) {
+		gs.X--;
 	}
 }
 
 func (gs *GameState) MoveRight() {
-	if gs.CanMove(gs.x+1, gs.y) {
-		gs.x++;
+	if gs.CanMove(gs.X+1, gs.Y) {
+		gs.X++;
 	}
 }
 
-func (gs GameState) GetGrid() []string {
+func (gs *GameState) GetGrid() []string {
 	return gs.currGrid
 }
 
@@ -112,7 +125,7 @@ func (gs *GameState) SetGrid(grid []string) {
 	gs.currGrid = grid
 }
 
-func (gs GameState) GetGridLoc(x int, y int) string {
+func (gs *GameState) GetGridLoc(x int, y int) string {
 	adjustedX := max(0, len(gs.currGrid[0]) / 2 + x)
 	adjustedY := max(0, len(gs.currGrid) / 2 + y)
 	// Dumb exit to send weird letter we can map to some style
@@ -123,7 +136,7 @@ func (gs GameState) GetGridLoc(x int, y int) string {
 	return string(loc)
 }
 
-func (gs GameState) GetGridLocColor(x int, y int) string {
+func (gs *GameState) GetGridLocColor(x int, y int) string {
 	var colorMap = map[string]string{
 		".": "#FFE4B5",
 		"^": "#444444",
@@ -134,7 +147,7 @@ func (gs GameState) GetGridLocColor(x int, y int) string {
 	return colorMap[gs.GetGridLoc(x, y)]
 }
 
-func (gs GameState) GetGridLocClass(x int, y int) string {
+func (gs *GameState) GetGridLocClass(x int, y int) string {
 	var classMap = map[string]string{
 		".": "desert",
 		"^": "mountain",
@@ -145,7 +158,7 @@ func (gs GameState) GetGridLocClass(x int, y int) string {
 	return classMap[gs.GetGridLoc(x, y)]
 }
 
-func (gs GameState) GetRoomHash() map[int]Room {
+func (gs *GameState) GetRoomHash() map[int]Room {
 	var roomMap = map[int]Room {
 		0: Room{Id: 0, Name: "Continent of Euniciar", Path: "map-mh04i224.txt"},
 		1: Room{Id: 1, Name: "Land of Patricolia", Path: "map-mh04dw5i.txt"},
@@ -153,19 +166,19 @@ func (gs GameState) GetRoomHash() map[int]Room {
 	return roomMap
 }
 
-func (gs GameState) GetRoom(i int) Room {
+func (gs *GameState) GetRoom(i int) Room {
 	return gs.GetRoomHash()[i]
 }
 
-func (gs GameState) GetCurrRoom() Room {
-	return gs.GetRoomHash()[gs.room]
+func (gs *GameState) GetCurrRoom() Room {
+	return gs.GetRoomHash()[gs.Room]
 }
 
-func (gs GameState) GetCurrRoomName() string {
-	return gs.GetRoomHash()[gs.room].Name
+func (gs *GameState) GetCurrRoomName() string {
+	return gs.GetRoomHash()[gs.Room].Name
 }
 
-func (gs GameState) GetMapRange(coord int) []int {
+func (gs *GameState) GetMapRange(coord int) []int {
 	var coordRange []int
 	for i := coord - 2; i < coord + 3; i++ {
 		coordRange = append(coordRange, i)

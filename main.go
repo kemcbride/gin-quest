@@ -33,13 +33,34 @@ func loadMap(roomPath string) []string {
 }
 
 func Game(c *gin.Context) {
+	// Load the game state
 	cookie, err := c.Cookie("game")
-	if _, reset := c.GetQuery("reset"); (err != nil) || reset {
-		cookie = "0,0,0"
-		c.SetCookie("game", cookie, cookieAge, "/", domain, false, true)
+	bytes := []byte(cookie)
+	gs, jsonLoadErr := gamestate.FromJson(bytes)
+
+	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
+		if jsonLoadErr != nil {
+			panic(fmt.Errorf("error loading gamestate json: ", jsonLoadErr))
+		}
+
+		// Initiialize a fresh game
+		blankGame := gamestate.GameState{
+			X: 0,
+			Y: 0,
+			Room: 0,
+		}
+		grid := loadMap(gs.GetCurrRoom().Path)
+		gs.SetGrid(grid)
+
+		blankGameJson, err := blankGame.ToJson()
+		if err != nil {
+			// TODO - dumb and lazy
+			panic(err)
+		}
+		c.SetCookie("game", string(blankGameJson), cookieAge, "/", domain, false, true)
 	}
 
-	gs := gamestate.DeserializeGameState(cookie)
+	// It shouldn't be erroring here?
 	grid := loadMap(gs.GetCurrRoom().Path)
 	gs.SetGrid(grid)
 	// Let's check the query path and respond to up, down, left, right.
@@ -53,16 +74,23 @@ func Game(c *gin.Context) {
 	} else if _, right := c.GetQuery("right"); right {
 		gs.MoveRight()
 	}
-	c.SetCookie("game", gamestate.SerializeGameState(gs), cookieAge, "/", domain, false, true)
+
+	// Save the game state back
+	j, err := gs.ToJson()
+	if err != nil {
+		// TODO dumb, lazy
+		panic(err)
+	}
+	c.SetCookie("game", string(j), cookieAge, "/", domain, false, true)
 
 	c.HTML(http.StatusOK, "game.html", gin.H{
 		"title": "Game Page",
-		"x": gs.GetX(),
-		"y": gs.GetY(),
+		"x": gs.X,
+		"y": gs.Y,
 		"room": gs.GetCurrRoom(),
 		"gs": &gs,
-		"xrange": gs.GetMapRange(gs.GetX()),
-		"yrange": gs.GetMapRange(gs.GetY()),
+		"xrange": gs.GetMapRange(gs.X),
+		"yrange": gs.GetMapRange(gs.Y),
 	})
 }
 
