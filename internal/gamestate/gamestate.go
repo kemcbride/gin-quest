@@ -3,8 +3,6 @@ package gamestate
 import (
 	"fmt"
 	"encoding/json"
-	"strings"
-	"strconv"
 )
 
 type Room struct {
@@ -17,29 +15,8 @@ type GameState struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 	Room int `json:"room"`
+	State int `json:"state"`
 	CurrGrid []string `json:"curr_grid,omitempty"`
-}
-
-func SerializeGameState(g GameState) string {
-	return fmt.Sprintf("%d,%d,%d", g.X, g.Y, g.Room)
-}
-
-func DeserializeGameState(s string) *GameState {
-	segments := strings.Split(s, ",")
-	var values [3]int
-	for i, seg := range segments {
-		val, err := strconv.Atoi(seg)
-		if err != nil {
-			// Lazy lazy bad
-			panic(err)
-		}
-		values[i] = val
-	}
-	return &GameState{
-		X: values[0],
-		Y: values[1],
-		Room: values[2],
-	}
 }
 
 // json serialization as methods

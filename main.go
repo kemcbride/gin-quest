@@ -27,9 +27,6 @@ func loadMap(roomPath string) []string {
 	var grid []string
 	lines := strings.Split(string(file), "\n")
 	grid = append(grid, lines...)
-	// for _, line := range lines {
-	// 	grid = append(grid, line)
-	// }
 	return grid
 }
 
@@ -49,6 +46,7 @@ func Game(c *gin.Context) {
 			X: 0,
 			Y: 0,
 			Room: 0,
+			State: 0,
 		}
 		gs.CurrGrid = loadMap(gs.GetCurrRoom().Path)
 
