@@ -26,9 +26,10 @@ func loadMap(roomPath string) []string {
 
 	var grid []string
 	lines := strings.Split(string(file), "\n")
-	for _, line := range lines {
-		grid = append(grid, line)
-	}
+	grid = append(grid, lines...)
+	// for _, line := range lines {
+	// 	grid = append(grid, line)
+	// }
 	return grid
 }
 
@@ -40,7 +41,7 @@ func Game(c *gin.Context) {
 
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
 		if jsonLoadErr != nil {
-			panic(fmt.Errorf("error loading gamestate json: ", jsonLoadErr))
+			panic(fmt.Errorf("error loading gamestate json: %w", jsonLoadErr))
 		}
 
 		// Initiialize a fresh game
@@ -107,7 +108,11 @@ func staticCacheMiddleware() gin.HandlerFunc {
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
-	r.SetTrustedProxies(nil)  // Only allow our own clientIP
+	err := r.SetTrustedProxies(nil)  // Only allow our own clientIP
+	if err != nil {
+		// We don't really have a way to recover from this.
+		panic(err)
+	}
 
 	r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
@@ -142,5 +147,9 @@ func main() {
 
 	// Start server on port 8080 (default)
 	// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
-	r.Run()
+	err = r.Run()
+	if err != nil {
+		// No way to recover from this, really.
+		panic(err)
+	}
 }
