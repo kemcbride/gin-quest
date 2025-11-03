@@ -13,7 +13,7 @@ type Room struct {
 type GameSave struct {
 	X int `json:"x"`
 	Y int `json:"y"`
-	Room string `json:"room"`
+	RoomKey string `json:"roomkey"`
 	State int `json:"state"`
 }
 
@@ -155,16 +155,16 @@ func (gs *GameState) GetRoomHash() map[string]Room {
 	return roomMap
 }
 
-func (gs *GameState) GetRoom(i string) Room {
-	return gs.GetRoomHash()[i]
+func (gs *GameState) GetRoom(key string) Room {
+	return gs.GetRoomHash()[key]
 }
 
 func (gs *GameState) GetCurrRoom() Room {
-	return gs.GetRoomHash()[gs.Save.Room]
+	return gs.GetRoomHash()[gs.Save.RoomKey]
 }
 
 func (gs *GameState) GetCurrRoomName() string {
-	return gs.GetRoomHash()[gs.Save.Room].Name
+	return gs.GetRoomHash()[gs.Save.RoomKey].Name
 }
 
 func (gs *GameState) GetMapRange(coord int) []int {

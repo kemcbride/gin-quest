@@ -43,7 +43,7 @@ func Game(c *gin.Context) {
 		gsave = &gamestate.GameSave{
 			X: 0,
 			Y: 0,
-			Room: "mh04i224",
+			RoomKey: "mh04i224",
 			State: 0,
 		}
 

@@ -21,7 +21,7 @@ type Encounter struct {
 	Name string
 }
 
-type Portal {
+type Portal struct {
 	Name string
 	Loc Location
 	Map string // Map Name / Id for destination map
@@ -29,7 +29,7 @@ type Portal {
 	Img string
 }
 
-type Area {
+type Area struct {
 	Name string
 	Rectanges [][]Location
 	Encounters []Encounter
