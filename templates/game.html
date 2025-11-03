@@ -15,8 +15,8 @@
 			<div id="map">
 			{{ range $yr := $ys }}
 			{{ range $xr := $xs }}
-			{{ if eq $xr $gs.X }}
-			{{ if eq $yr $gs.Y }}
+			{{ if eq $xr $gs.Save.X }}
+			{{ if eq $yr $gs.Save.Y }}
 				<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
 					<img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
 				</div>

@@ -19,7 +19,7 @@ const domain string = "kemcbride.noho.st"
 
 
 func loadMap(roomPath string) []string {
-	file, err := server.ReadFile(fmt.Sprintf("static/%s", roomPath))
+	file, err := server.ReadFile(fmt.Sprintf("static/map/%s/map.txt", roomPath))
 	if err != nil {
 		panic(err)
 	}
@@ -34,31 +34,37 @@ func Game(c *gin.Context) {
 	// Load the game state
 	cookie, err := c.Cookie("game")
 	bytes := []byte(cookie)
-	gs, jsonLoadErr := gamestate.FromJson(bytes)
+	gsave, jsonLoadErr := gamestate.GameSaveFromJson(bytes)
 
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
-		if jsonLoadErr != nil {
-			panic(fmt.Errorf("error loading gamestate json: %w", jsonLoadErr))
+		// if jsonLoadErr != nil {
+		// 	panic(fmt.Errorf("error loading gamesave json: %w", jsonLoadErr))
+		// }
+		gsave = &gamestate.GameSave{
+			X: 0,
+			Y: 0,
+			Room: "mh04i224",
+			State: 0,
 		}
 
 		// Initiialize a fresh game
-		blankGame := gamestate.GameState{
-			X: 0,
-			Y: 0,
-			Room: 0,
-			State: 0,
+		gs := gamestate.GameState{
+			Save: *gsave,
 		}
-		gs.CurrGrid = loadMap(gs.GetCurrRoom().Path)
+		gs.CurrGrid = loadMap(gs.GetCurrRoom().Id)
 
-		blankGameJson, err := blankGame.ToJson()
+		blankGameSaveJson, err := gs.Save.ToJson()
 		if err != nil {
 			// TODO - dumb and lazy
 			panic(err)
 		}
-		c.SetCookie("game", string(blankGameJson), cookieAge, "/", domain, false, true)
+		c.SetCookie("game", string(blankGameSaveJson), cookieAge, "/", domain, false, true)
 	}
 
-	gs.CurrGrid = loadMap(gs.GetCurrRoom().Path)
+	gs := gamestate.GameState{
+		Save: *gsave,
+	}
+	gs.CurrGrid = loadMap(gs.GetCurrRoom().Id)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.MoveUp()
@@ -72,7 +78,7 @@ func Game(c *gin.Context) {
 	}
 
 	// Save the game state back
-	j, err := gs.ToJson()
+	j, err := gs.Save.ToJson()
 	if err != nil {
 		// TODO dumb, lazy
 		panic(err)
@@ -81,12 +87,12 @@ func Game(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "game.html", gin.H{
 		"title": "Game Page",
-		"x": gs.X,
-		"y": gs.Y,
+		"x": gs.Save.X,
+		"y": gs.Save.Y,
 		"room": gs.GetCurrRoom(),
 		"gs": &gs,
-		"xrange": gs.GetMapRange(gs.X),
-		"yrange": gs.GetMapRange(gs.Y),
+		"xrange": gs.GetMapRange(gs.Save.X),
+		"yrange": gs.GetMapRange(gs.Save.Y),
 	})
 }
 

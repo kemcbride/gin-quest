@@ -1,0 +1,14 @@
+{
+	'npcs': [
+		{
+			'name': 'Turt',
+			'location': [3, 3],
+			'img': 'ginquestnpc-turtum0.1.png',
+			'interaction': '0'
+		}
+	],
+	'places': [
+		{'name': 'Chia Town', 'location': [0,0], 'map': 'mh04i224', 'img': 'ginquestnpc-chia0.1.png'}
+	],
+	'areas': [],
+}

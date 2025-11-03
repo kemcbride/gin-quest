@@ -6,20 +6,40 @@ import (
 )
 
 type Room struct {
-	Id int
+	Id string
 	Name string
-	Path string
+}
+
+type GameSave struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+	Room string `json:"room"`
+	State int `json:"state"`
 }
 
 type GameState struct {
-	X int `json:"x"`
-	Y int `json:"y"`
-	Room int `json:"room"`
-	State int `json:"state"`
+	Save GameSave `json:"save"`
 	CurrGrid []string `json:"curr_grid,omitempty"`
 }
 
 // json serialization as methods
+func (save *GameSave) ToJson() ([]byte, error) {
+	j, err := json.Marshal(save)
+	if err != nil {
+		return []byte{}, err
+	}
+	return j, nil
+}
+
+func GameSaveFromJson(b []byte) (*GameSave, error) {
+	gs := &GameSave{}
+	err := json.Unmarshal(b, &gs)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling gamesave: %v, %s", err, b)
+	}
+	return gs, nil
+}
+
 func (gs *GameState) ToJson() ([]byte, error) {
 	j, err := json.Marshal(gs)
 	if err != nil {
@@ -71,26 +91,26 @@ func (gs *GameState) CanMove(dx int, dy int) bool {
 }
 
 func (gs *GameState) MoveUp() {
-	if gs.CanMove(gs.X, gs.Y-1) {
-		gs.Y--;
+	if gs.CanMove(gs.Save.X, gs.Save.Y-1) {
+		gs.Save.Y--;
 	}
 }
 
 func (gs *GameState) MoveDown() {
-	if gs.CanMove(gs.X, gs.Y+1) {
-		gs.Y++;
+	if gs.CanMove(gs.Save.X, gs.Save.Y+1) {
+		gs.Save.Y++;
 	}
 }
 
 func (gs *GameState) MoveLeft() {
-	if gs.CanMove(gs.X-1, gs.Y) {
-		gs.X--;
+	if gs.CanMove(gs.Save.X-1, gs.Save.Y) {
+		gs.Save.X--;
 	}
 }
 
 func (gs *GameState) MoveRight() {
-	if gs.CanMove(gs.X+1, gs.Y) {
-		gs.X++;
+	if gs.CanMove(gs.Save.X+1, gs.Save.Y) {
+		gs.Save.X++;
 	}
 }
 
@@ -127,24 +147,24 @@ func (gs *GameState) GetGridLocClass(x int, y int) string {
 	return classMap[gs.GetGridLoc(x, y)]
 }
 
-func (gs *GameState) GetRoomHash() map[int]Room {
-	var roomMap = map[int]Room {
-		0: Room{Id: 0, Name: "Continent of Euniciar", Path: "map-mh04i224.txt"},
-		1: Room{Id: 1, Name: "Land of Patricolia", Path: "map-mh04dw5i.txt"},
+func (gs *GameState) GetRoomHash() map[string]Room {
+	var roomMap = map[string]Room {
+		"mh04i224": Room{Id: "mh04i224", Name: "Continent of Euniciar"},
+		"mh04dw5i": Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
 	}
 	return roomMap
 }
 
-func (gs *GameState) GetRoom(i int) Room {
+func (gs *GameState) GetRoom(i string) Room {
 	return gs.GetRoomHash()[i]
 }
 
 func (gs *GameState) GetCurrRoom() Room {
-	return gs.GetRoomHash()[gs.Room]
+	return gs.GetRoomHash()[gs.Save.Room]
 }
 
 func (gs *GameState) GetCurrRoomName() string {
-	return gs.GetRoomHash()[gs.Room].Name
+	return gs.GetRoomHash()[gs.Save.Room].Name
 }
 
 func (gs *GameState) GetMapRange(coord int) []int {
