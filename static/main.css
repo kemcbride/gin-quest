@@ -45,13 +45,13 @@ body {
   margin: 10%;
 }
 
-#mapcharctn {
-    display: inline;
-    text-align: center;
-    vertical-align: middle;
+#mapchar {
+    width: 90%;
+    height: 90%;
+    object-fit: scale-down;
 }
 
-#mapchar {
+.mapnpc {
     width: 90%;
     height: 90%;
     object-fit: scale-down;

@@ -72,7 +72,7 @@ func (gs *GameState) CanMove(dx int, dy int) bool {
 	// For now, we just want to check if it's water or mountain
 	// Or, the edge of the map.
 	// Eventually could handle a case where we fly or swim.
-	loc := gs.GetGridLoc(dx, dy)
+	loc := gs.Room.GetGridLoc(dx, dy)
 	switch loc {
 	case	".":
 		return true
@@ -111,39 +111,6 @@ func (gs *GameState) MoveRight() {
 	}
 }
 
-func (gs *GameState) GetGridLoc(x int, y int) string {
-	adjustedX := max(0, len(gs.Room.Grid[0]) / 2 + x)
-	adjustedY := max(0, len(gs.Room.Grid) / 2 + y)
-	// Dumb exit to send weird letter we can map to some style
-	if ( adjustedX < 0 || adjustedX >= len(gs.Room.Grid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.Room.Grid) ) {
-		return "Q"
-	}
-	loc := gs.Room.Grid[adjustedY][adjustedX]
-	return string(loc)
-}
-
-func (gs *GameState) GetGridLocColor(x int, y int) string {
-	var colorMap = map[string]string{
-		".": "#FFE4B5",
-		"^": "#444444",
-		"~": "#4682B4",
-		"#": "#9ACD32",
-		"Q": "#000000",
-	}
-	return colorMap[gs.GetGridLoc(x, y)]
-}
-
-func (gs *GameState) GetGridLocClass(x int, y int) string {
-	var classMap = map[string]string{
-		".": "desert",
-		"^": "mountain",
-		"~": "water",
-		"#": "grass",
-		"Q": "abyss",
-	}
-	return classMap[gs.GetGridLoc(x, y)]
-}
-
 func (gs *GameState) GetRoomHash() map[string]room.Room {
 	var roomMap = map[string]room.Room {
 		"mh04i224": room.Room{Id: "mh04i224", Name: "Continent of Euniciar"},
@@ -171,3 +138,16 @@ func (gs *GameState) GetMapRange(coord int) []int {
 	}
 	return coordRange
 }
+
+func (gs *GameState) GetGridLocClass(x int, y int) string {
+	return gs.Room.GetGridLocClass(x, y)
+}
+
+func (gs *GameState) GetGridLocImg(x int, y int) string {
+	return gs.Room.GetGridLocImg(x, y)
+}
+
+func (gs *GameState) NpcHere(x int, y int) bool {
+	return gs.Room.NpcHere(x, y)
+}
+

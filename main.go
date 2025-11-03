@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"embed"
 	"net/http"
 	"strings"
@@ -25,9 +25,6 @@ func Game(c *gin.Context) {
 	gsave, jsonLoadErr := gamestate.GameSaveFromJson(bytes)
 
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
-		// if jsonLoadErr != nil {
-		// 	panic(fmt.Errorf("error loading gamesave json: %w", jsonLoadErr))
-		// }
 		gsave = &gamestate.GameSave{
 			X: 0,
 			Y: 0,
@@ -41,6 +38,7 @@ func Game(c *gin.Context) {
 		}
 		gs.Room = gs.GetCurrRoom()
 		gs.Room.LoadMap(server)
+		gs.Room.LoadMeta(server)
 
 		blankGameSaveJson, err := gs.Save.ToJson()
 		if err != nil {
@@ -54,8 +52,8 @@ func Game(c *gin.Context) {
 		Save: *gsave,
 	}
 	gs.Room = gs.GetCurrRoom()
-	fmt.Println(gs.Room)
 	gs.Room.LoadMap(server)
+	gs.Room.LoadMeta(server)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.MoveUp()

@@ -3,6 +3,7 @@ package room
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -41,6 +42,12 @@ type Area struct {
 	Encounters []Encounter
 }
 
+type Metadata struct {
+	Npcs []Npc
+	Portals []Portal
+	Areas []Area
+}
+
 // So, a Room is the main object here.
 type Room struct {
 	Id string
@@ -66,3 +73,64 @@ func LoadMap(server embed.FS, roomKey string) MapGrid {
 func (r *Room) LoadMap(server embed.FS) {
 	r.Grid = LoadMap(server, r.Id)
 }
+
+func (r *Room) LoadMeta(server embed.FS) {
+	// metadata := LoadMeta(server, r.Id)
+	file, err := server.ReadFile(fmt.Sprintf("static/map/%s/meta.json", r.Id))
+	if err != nil {
+		panic(err)
+	}
+
+	var metajson Metadata
+	err = json.Unmarshal(file, &metajson)
+	if err != nil {
+		panic(err)
+	}
+
+	r.Npcs = metajson.Npcs
+	r.Portals = metajson.Portals
+	r.Areas = metajson.Areas
+}
+
+func (r *Room) GetGridLoc(x int, y int) string {
+	adjustedX := max(0, len(r.Grid[0]) / 2 + x)
+	adjustedY := max(0, len(r.Grid) / 2 + y)
+	// Dumb exit to send weird letter we can map to some style
+	if ( adjustedX < 0 || adjustedX >= len(r.Grid[0]) ) || (adjustedY < 0 || adjustedY >= len(r.Grid) ) {
+		return "Q"
+	}
+	loc := r.Grid[adjustedY][adjustedX]
+	return string(loc)
+}
+
+func (r *Room) GetGridLocClass(x int, y int) string {
+	var classMap = map[string]string{
+		".": "desert",
+		"^": "mountain",
+		"~": "water",
+		"#": "grass",
+		"Q": "abyss",
+	}
+	return classMap[r.GetGridLoc(x, y)]
+}
+
+func (r *Room) GetGridLocImg(x int, y int) string {
+	s := "" // default do return empty string
+	// Use a map lookup instead? Meh.
+	for _, npc := range r.Npcs {
+		if (npc.Loc.X == x && npc.Loc.Y == y) {
+			return npc.Img
+		}
+	}
+	return s
+}
+
+func (r *Room) NpcHere(x int, y int) bool {
+	for _, npc := range r.Npcs {
+		if (npc.Loc.X == x && npc.Loc.Y == y) {
+			return true
+		}
+	}
+	return false
+}
+

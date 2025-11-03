@@ -21,10 +21,22 @@
 					<img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
 				</div>
 			{{ else }}
+				{{ if $gs.NpcHere $xr $yr }}
+				<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
+					<img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+				</div>
+				{{ else }}
 				<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
+				{{ end }}
 			{{ end }}
 			{{ else }}
+				{{ if $gs.NpcHere $xr $yr }}
+				<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
+					<img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+				</div>
+				{{ else }}
 				<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
+				{{ end }}
 			{{ end }}
 			{{ end }}
 			{{ end }}
