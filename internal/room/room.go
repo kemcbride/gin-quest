@@ -1,6 +1,12 @@
 package room
 // Room - aka, not a map since that's a keyword.
 
+import (
+	"embed"
+	"fmt"
+	"strings"
+)
+
 type MapGrid = []string
 
 
@@ -17,7 +23,7 @@ type Npc struct {
 }
 
 type Encounter struct {
-	Rate float
+	Rate float32
 	Name string
 }
 
@@ -25,7 +31,7 @@ type Portal struct {
 	Name string
 	Loc Location
 	Map string // Map Name / Id for destination map
-	DestLoc Location Location // Entry location in destination map
+	DestLoc Location // Entry location in destination map
 	Img string
 }
 
@@ -45,3 +51,18 @@ type Room struct {
 	Areas []Area
 }
 
+func LoadMap(server embed.FS, roomKey string) MapGrid {
+	file, err := server.ReadFile(fmt.Sprintf("static/map/%s/map.txt", roomKey))
+	if err != nil {
+		panic(err)
+	}
+
+	var grid []string
+	lines := strings.Split(string(file), "\n")
+	grid = append(grid, lines...)
+	return grid
+}
+
+func (r *Room) LoadMap(server embed.FS) {
+	r.Grid = LoadMap(server, r.Id)
+}

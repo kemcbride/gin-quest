@@ -3,12 +3,9 @@ package gamestate
 import (
 	"fmt"
 	"encoding/json"
-)
 
-type Room struct {
-	Id string
-	Name string
-}
+	"github.com/kemcbride/gin-quest/internal/room"
+)
 
 type GameSave struct {
 	X int `json:"x"`
@@ -19,7 +16,7 @@ type GameSave struct {
 
 type GameState struct {
 	Save GameSave `json:"save"`
-	CurrGrid []string `json:"curr_grid,omitempty"`
+	Room room.Room
 }
 
 // json serialization as methods
@@ -115,13 +112,13 @@ func (gs *GameState) MoveRight() {
 }
 
 func (gs *GameState) GetGridLoc(x int, y int) string {
-	adjustedX := max(0, len(gs.CurrGrid[0]) / 2 + x)
-	adjustedY := max(0, len(gs.CurrGrid) / 2 + y)
+	adjustedX := max(0, len(gs.Room.Grid[0]) / 2 + x)
+	adjustedY := max(0, len(gs.Room.Grid) / 2 + y)
 	// Dumb exit to send weird letter we can map to some style
-	if ( adjustedX < 0 || adjustedX >= len(gs.CurrGrid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.CurrGrid) ) {
+	if ( adjustedX < 0 || adjustedX >= len(gs.Room.Grid[0]) ) || (adjustedY < 0 || adjustedY >= len(gs.Room.Grid) ) {
 		return "Q"
 	}
-	loc := gs.CurrGrid[adjustedY][adjustedX]
+	loc := gs.Room.Grid[adjustedY][adjustedX]
 	return string(loc)
 }
 
@@ -147,19 +144,19 @@ func (gs *GameState) GetGridLocClass(x int, y int) string {
 	return classMap[gs.GetGridLoc(x, y)]
 }
 
-func (gs *GameState) GetRoomHash() map[string]Room {
-	var roomMap = map[string]Room {
-		"mh04i224": Room{Id: "mh04i224", Name: "Continent of Euniciar"},
-		"mh04dw5i": Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
+func (gs *GameState) GetRoomHash() map[string]room.Room {
+	var roomMap = map[string]room.Room {
+		"mh04i224": room.Room{Id: "mh04i224", Name: "Continent of Euniciar"},
+		"mh04dw5i": room.Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
 	}
 	return roomMap
 }
 
-func (gs *GameState) GetRoom(key string) Room {
+func (gs *GameState) GetRoom(key string) room.Room {
 	return gs.GetRoomHash()[key]
 }
 
-func (gs *GameState) GetCurrRoom() Room {
+func (gs *GameState) GetCurrRoom() room.Room {
 	return gs.GetRoomHash()[gs.Save.RoomKey]
 }
 

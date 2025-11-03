@@ -18,18 +18,6 @@ const cookieAge int = 3600 * 24 * 7 // 1 week?
 const domain string = "kemcbride.noho.st"
 
 
-func loadMap(roomPath string) []string {
-	file, err := server.ReadFile(fmt.Sprintf("static/map/%s/map.txt", roomPath))
-	if err != nil {
-		panic(err)
-	}
-
-	var grid []string
-	lines := strings.Split(string(file), "\n")
-	grid = append(grid, lines...)
-	return grid
-}
-
 func Game(c *gin.Context) {
 	// Load the game state
 	cookie, err := c.Cookie("game")
@@ -51,7 +39,8 @@ func Game(c *gin.Context) {
 		gs := gamestate.GameState{
 			Save: *gsave,
 		}
-		gs.CurrGrid = loadMap(gs.GetCurrRoom().Id)
+		gs.Room = gs.GetCurrRoom()
+		gs.Room.LoadMap(server)
 
 		blankGameSaveJson, err := gs.Save.ToJson()
 		if err != nil {
@@ -64,7 +53,9 @@ func Game(c *gin.Context) {
 	gs := gamestate.GameState{
 		Save: *gsave,
 	}
-	gs.CurrGrid = loadMap(gs.GetCurrRoom().Id)
+	gs.Room = gs.GetCurrRoom()
+	fmt.Println(gs.Room)
+	gs.Room.LoadMap(server)
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.MoveUp()
