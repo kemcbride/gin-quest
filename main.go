@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"embed"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-contrib/static"
@@ -15,7 +16,7 @@ import (
 var server embed.FS
 
 const cookieAge int = 3600 * 24 * 7 // 1 week?
-const domain string = "kemcbride.noho.st"
+var domain string = "kemcbride.noho.st"
 
 
 func Game(c *gin.Context) {
@@ -102,6 +103,10 @@ func main() {
 	if err != nil {
 		// We don't really have a way to recover from this.
 		panic(err)
+	}
+
+	if os.Getenv("DOMAIN") != domain {
+		domain = ""
 	}
 
 	r.LoadHTMLGlob("templates/*")
