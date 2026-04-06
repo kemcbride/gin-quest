@@ -1,6 +1,6 @@
 module github.com/kemcbride/gin-quest
 
-go 1.25.3
+go 1.26
 
 require (
 	github.com/gin-contrib/static v1.1.5
