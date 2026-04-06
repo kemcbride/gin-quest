@@ -1,7 +1,7 @@
-.PHONY: prod
+.PHONY: prod dev
 
 prod:
-	GIN_MODE=release go run main.go
+	DOMAIN=kemcbride.noho.st GIN_MODE=release go run main.go
 
 dev:
 	go run main.go
