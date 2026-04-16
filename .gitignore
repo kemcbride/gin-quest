@@ -7,6 +7,10 @@
 *.dll
 *.so
 *.dylib
+.bin/**
+
+# Air build files
+tmp/
 
 # Test binary, built with `go test -c`
 *.test
