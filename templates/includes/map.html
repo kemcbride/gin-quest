@@ -1,0 +1,36 @@
+{{ define "map" }}
+
+{{ $xs := .xrange }}
+{{ $ys := .yrange }}
+{{ $gs := .gs }}
+
+<div id="map">
+{{ range $yr := $ys }}
+{{ range $xr := $xs }}
+{{ if eq $xr $gs.Save.X }}
+{{ if eq $yr $gs.Save.Y }}
+    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
+        <img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
+    </div>
+{{ else }}
+    {{ if $gs.NpcHere $xr $yr }}
+    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
+        <img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+    </div>
+    {{ else }}
+    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
+    {{ end }}
+{{ end }}
+{{ else }}
+    {{ if $gs.NpcHere $xr $yr }}
+    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
+        <img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+    </div>
+    {{ else }}
+    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
+    {{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+			</div>
+{{ end }}

@@ -3,12 +3,15 @@ package main
 import (
 	// "fmt"
 	"embed"
+	// "path/filepath"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+
 	"github.com/kemcbride/gin-quest/internal/gamestate"
 )
 
@@ -75,7 +78,7 @@ func Game(c *gin.Context) {
 	}
 	c.SetCookie("game", string(j), cookieAge, "/", domain, false, true)
 
-	c.HTML(http.StatusOK, "game.html", gin.H{
+    c.HTML(http.StatusOK, "googoogaga", gin.H{
 		"title": "Game Page",
 		"x": gs.Save.X,
 		"y": gs.Save.Y,
@@ -99,6 +102,8 @@ func staticCacheMiddleware() gin.HandlerFunc {
 func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	r := gin.Default()
+	r.HTMLRender = createMyRender()
+
 	err := r.SetTrustedProxies(nil)  // Only allow our own clientIP
 	if err != nil {
 		// We don't really have a way to recover from this.
@@ -109,7 +114,7 @@ func main() {
 		domain = ""
 	}
 
-	r.LoadHTMLGlob("templates/*")
+	// r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
 	if err != nil {
 		panic(err)
@@ -123,7 +128,7 @@ func main() {
 		})
 	})
 	r.GET("/gin-quest/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
+		c.HTML(http.StatusOK, "beepboop", gin.H{
 			"title": "Hello World Index",
 		})
 	})
@@ -148,3 +153,51 @@ func main() {
 		panic(err)
 	}
 }
+
+// From https://github.com/gin-contrib/multitemplate?tab=readme-ov-file#advanced-example
+// func loadTemplates(path string) multitemplate.Renderer {
+// 	r := multitemplate.NewRenderer()
+// 	layouts, err := filepath.Glob(path + "/layouts/*.html")
+// 	if err != nil {
+// 	  panic(err.Error())
+// 	}
+//
+//     for _, layout := range layouts {
+//         fmt.Println(layout)
+//         fmt.Println(filepath.Base(layout))
+//     }
+//
+// 	includes, err := filepath.Glob(path + "/includes/*.html")
+// 	if err != nil {
+// 	  panic(err.Error())
+// 	}
+//
+//     // Generate our templates map from our layouts/ and includes/ directories
+//     for _, include := range includes {
+//       layoutCopy := make([]string, len(layouts))
+//       copy(layoutCopy, layouts)
+//       files := append(layoutCopy, include)
+//       r.AddFromFiles(filepath.Base(include), files...)
+//     }
+//     return r
+// }
+
+// https://gin-gonic.com/en/docs/rendering/multiple-template/
+func createMyRender() multitemplate.Renderer {
+  r := multitemplate.NewRenderer()
+  r.AddFromFiles("index", "./templates/layouts/index.html")
+  r.AddFromFiles("googoogaga", "./templates/layouts/game.html", "templates/includes/map.html", "templates/includes/menu.html")
+  return r
+}
+
+// also from https://gin-gonic.com/en/docs/rendering/multiple-template/
+// // renderTemplate is a wrapper around template.ExecuteTemplate.
+// func renderTemplate(w http.ResponseWriter, name string, data map[string]interface{}) error {
+// 	// Ensure the template exists in the map.
+// 	tmpl, ok := templates[name]
+// 	if !ok {
+// 		return fmt.Errorf("The template %s does not exist.", name)
+// 	}
+//
+// 	return tmpl.ExecuteTemplate(w, "base.tmpl", data)
+// }
