@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="http://kemcbride.noho.st/gin-quest/static/main.css" rel="stylesheet" />
+		<title> {{ .title }} </title>
+	</head>
+
+	<body>
+		<h2> {{ .gs.GetCurrRoomName }} </h2>
+
+		{{ $xs := .xrange }}
+		{{ $ys := .yrange }}
+		{{ $gs := .gs }}
+		<div class="container">
+			{{ template "map" . }}
+
+			{{ template "menu" . }}
+		</div>
+
+
+	</body>
+</html>

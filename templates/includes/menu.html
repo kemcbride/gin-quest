@@ -1,0 +1,28 @@
+{{ define "menu" }}
+<div class="menu">
+	<div class="character">
+		<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
+	</div>
+	<div class="controls">
+		<div> </div>
+		<div class="dir" onclick="window.location.href='.?up';">
+			↑
+		</div>
+		<div> </div>
+		<div class="dir" onclick="window.location.href='.?left';">
+			←
+		</div>
+		<div> </div>
+		<div class="dir" onclick="window.location.href='.?right';">
+			→
+		</div>
+		<div> </div>
+		<div class="dir" onclick="window.location.href='.?down';">
+			↓
+		</div>
+	</div>
+	<div class="status">
+		{{ .gs.GetStatusBlurb }}
+	</div>
+</div>
+{{ end }}
