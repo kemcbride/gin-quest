@@ -131,9 +131,9 @@ func (gs *GameState) GetCurrRoomName() string {
 	return gs.GetRoomHash()[gs.Save.RoomKey].Name
 }
 
-func (gs *GameState) GetMapRange(coord int) []int {
+func (gs *GameState) GetMapRange(coord int, size int) []int {
 	var coordRange []int
-	for i := coord - 2; i < coord+3; i++ {
+	for i := coord - size; i < coord+size+1; i++ {
 		coordRange = append(coordRange, i)
 	}
 	return coordRange

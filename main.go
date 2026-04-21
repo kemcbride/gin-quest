@@ -83,8 +83,8 @@ func Game(c *gin.Context) {
 		"y":      gs.Save.Y,
 		"room":   gs.GetCurrRoom(),
 		"gs":     &gs,
-		"xrange": gs.GetMapRange(gs.Save.X),
-		"yrange": gs.GetMapRange(gs.Save.Y),
+		"xrange": gs.GetMapRange(gs.Save.X, 3),
+		"yrange": gs.GetMapRange(gs.Save.Y, 3),
 	})
 }
 
