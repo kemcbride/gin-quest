@@ -1,4 +1,5 @@
 package room
+
 // Room - aka, not a map since that's a keyword.
 
 import (
@@ -10,16 +11,15 @@ import (
 
 type MapGrid = []string
 
-
 type Location struct {
 	X int
 	Y int
 }
 
 type Npc struct {
-	Name string
-	Loc Location
-	Img string
+	Name        string
+	Loc         Location
+	Img         string
 	Interaction string
 }
 
@@ -29,33 +29,33 @@ type Encounter struct {
 }
 
 type Portal struct {
-	Name string
-	Loc Location
-	Map string // Map Name / Id for destination map
+	Name    string
+	Loc     Location
+	Map     string   // Map Name / Id for destination map
 	DestLoc Location // Entry location in destination map
-	Img string
+	Img     string
 }
 
 type Area struct {
-	Name string
-	Rectanges [][]Location
+	Name       string
+	Rectanges  [][]Location
 	Encounters []Encounter
 }
 
 type Metadata struct {
-	Npcs []Npc
+	Npcs    []Npc
 	Portals []Portal
-	Areas []Area
+	Areas   []Area
 }
 
 // So, a Room is the main object here.
 type Room struct {
-	Id string
-	Name string
-	Grid MapGrid
-	Npcs []Npc
+	Id      string
+	Name    string
+	Grid    MapGrid
+	Npcs    []Npc
 	Portals []Portal
-	Areas []Area
+	Areas   []Area
 }
 
 func LoadMap(server embed.FS, roomKey string) MapGrid {
@@ -93,10 +93,10 @@ func (r *Room) LoadMeta(server embed.FS) {
 }
 
 func (r *Room) GetGridLoc(x int, y int) string {
-	adjustedX := max(0, len(r.Grid[0]) / 2 + x)
-	adjustedY := max(0, len(r.Grid) / 2 + y)
+	adjustedX := max(0, len(r.Grid[0])/2+x)
+	adjustedY := max(0, len(r.Grid)/2+y)
 	// Dumb exit to send weird letter we can map to some style
-	if ( adjustedX < 0 || adjustedX >= len(r.Grid[0]) ) || (adjustedY < 0 || adjustedY >= len(r.Grid) ) {
+	if (adjustedX < 0 || adjustedX >= len(r.Grid[0])) || (adjustedY < 0 || adjustedY >= len(r.Grid)) {
 		return "Q"
 	}
 	loc := r.Grid[adjustedY][adjustedX]
@@ -118,7 +118,7 @@ func (r *Room) GetGridLocImg(x int, y int) string {
 	s := "" // default do return empty string
 	// Use a map lookup instead? Meh.
 	for _, npc := range r.Npcs {
-		if (npc.Loc.X == x && npc.Loc.Y == y) {
+		if npc.Loc.X == x && npc.Loc.Y == y {
 			return npc.Img
 		}
 	}
@@ -127,10 +127,9 @@ func (r *Room) GetGridLocImg(x int, y int) string {
 
 func (r *Room) NpcHere(x int, y int) bool {
 	for _, npc := range r.Npcs {
-		if (npc.Loc.X == x && npc.Loc.Y == y) {
+		if npc.Loc.X == x && npc.Loc.Y == y {
 			return true
 		}
 	}
 	return false
 }
-

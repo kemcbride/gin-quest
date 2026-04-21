@@ -1,17 +1,17 @@
 package gamestate
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 
 	"github.com/kemcbride/gin-quest/internal/room"
 )
 
 type GameSave struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X       int    `json:"x"`
+	Y       int    `json:"y"`
 	RoomKey string `json:"roomkey"`
-	State int `json:"state"`
+	State   int    `json:"state"`
 }
 
 type GameState struct {
@@ -74,7 +74,7 @@ func (gs *GameState) CanMove(dx int, dy int) bool {
 	// Eventually could handle a case where we fly or swim.
 	loc := gs.Room.GetGridLoc(dx, dy)
 	switch loc {
-	case	".":
+	case ".":
 		return true
 	case "^":
 		return false
@@ -89,30 +89,30 @@ func (gs *GameState) CanMove(dx int, dy int) bool {
 
 func (gs *GameState) MoveUp() {
 	if gs.CanMove(gs.Save.X, gs.Save.Y-1) {
-		gs.Save.Y--;
+		gs.Save.Y--
 	}
 }
 
 func (gs *GameState) MoveDown() {
 	if gs.CanMove(gs.Save.X, gs.Save.Y+1) {
-		gs.Save.Y++;
+		gs.Save.Y++
 	}
 }
 
 func (gs *GameState) MoveLeft() {
 	if gs.CanMove(gs.Save.X-1, gs.Save.Y) {
-		gs.Save.X--;
+		gs.Save.X--
 	}
 }
 
 func (gs *GameState) MoveRight() {
 	if gs.CanMove(gs.Save.X+1, gs.Save.Y) {
-		gs.Save.X++;
+		gs.Save.X++
 	}
 }
 
 func (gs *GameState) GetRoomHash() map[string]room.Room {
-	var roomMap = map[string]room.Room {
+	var roomMap = map[string]room.Room{
 		"mh04i224": room.Room{Id: "mh04i224", Name: "Continent of Euniciar"},
 		"mh04dw5i": room.Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
 	}
@@ -133,7 +133,7 @@ func (gs *GameState) GetCurrRoomName() string {
 
 func (gs *GameState) GetMapRange(coord int) []int {
 	var coordRange []int
-	for i := coord - 2; i < coord + 3; i++ {
+	for i := coord - 2; i < coord+3; i++ {
 		coordRange = append(coordRange, i)
 	}
 	return coordRange
@@ -150,4 +150,3 @@ func (gs *GameState) GetGridLocImg(x int, y int) string {
 func (gs *GameState) NpcHere(x int, y int) bool {
 	return gs.Room.NpcHere(x, y)
 }
-

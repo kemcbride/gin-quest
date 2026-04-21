@@ -21,7 +21,6 @@ var server embed.FS
 const cookieAge int = 3600 * 24 * 7 // 1 week?
 var domain string = "kemcbride.noho.st"
 
-
 func Game(c *gin.Context) {
 	// Load the game state
 	cookie, err := c.Cookie("game")
@@ -30,10 +29,10 @@ func Game(c *gin.Context) {
 
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
 		gsave = &gamestate.GameSave{
-			X: 0,
-			Y: 0,
+			X:       0,
+			Y:       0,
 			RoomKey: "mh04i224",
-			State: 0,
+			State:   0,
 		}
 
 		// Initiialize a fresh game
@@ -78,12 +77,12 @@ func Game(c *gin.Context) {
 	}
 	c.SetCookie("game", string(j), cookieAge, "/", domain, false, true)
 
-    c.HTML(http.StatusOK, "googoogaga", gin.H{
-		"title": "Game Page",
-		"x": gs.Save.X,
-		"y": gs.Save.Y,
-		"room": gs.GetCurrRoom(),
-		"gs": &gs,
+	c.HTML(http.StatusOK, "googoogaga", gin.H{
+		"title":  "Game Page",
+		"x":      gs.Save.X,
+		"y":      gs.Save.Y,
+		"room":   gs.GetCurrRoom(),
+		"gs":     &gs,
 		"xrange": gs.GetMapRange(gs.Save.X),
 		"yrange": gs.GetMapRange(gs.Save.Y),
 	})
@@ -104,7 +103,7 @@ func main() {
 	r := gin.Default()
 	r.HTMLRender = createMyRender()
 
-	err := r.SetTrustedProxies(nil)  // Only allow our own clientIP
+	err := r.SetTrustedProxies(nil) // Only allow our own clientIP
 	if err != nil {
 		// We don't really have a way to recover from this.
 		panic(err)
@@ -184,10 +183,10 @@ func main() {
 
 // https://gin-gonic.com/en/docs/rendering/multiple-template/
 func createMyRender() multitemplate.Renderer {
-  r := multitemplate.NewRenderer()
-  r.AddFromFiles("index", "./templates/layouts/index.html")
-  r.AddFromFiles("googoogaga", "./templates/layouts/game.html", "templates/includes/map.html", "templates/includes/menu.html")
-  return r
+	r := multitemplate.NewRenderer()
+	r.AddFromFiles("index", "./templates/layouts/index.html")
+	r.AddFromFiles("googoogaga", "./templates/layouts/game.html", "templates/includes/map.html", "templates/includes/menu.html")
+	return r
 }
 
 // also from https://gin-gonic.com/en/docs/rendering/multiple-template/
