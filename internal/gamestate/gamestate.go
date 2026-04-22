@@ -147,6 +147,14 @@ func (gs *GameState) GetGridLocImg(x int, y int) string {
 	return gs.Room.GetGridLocImg(x, y)
 }
 
+func (gs *GameState) ProtagHere(x int, y int) bool {
+	return gs.Save.X == x && gs.Save.Y == y
+}
+
 func (gs *GameState) NpcHere(x int, y int) bool {
 	return gs.Room.NpcHere(x, y)
+}
+
+func (gs *GameState) PortalHere(x int, y int) bool {
+	return gs.Room.PortalHere(x, y)
 }

@@ -6,31 +6,36 @@
 
 <div id="map">
 {{ range $yr := $ys }}
-{{ range $xr := $xs }}
-{{ if eq $xr $gs.Save.X }}
-{{ if eq $yr $gs.Save.Y }}
-    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
-        <img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
-    </div>
-{{ else }}
-    {{ if $gs.NpcHere $xr $yr }}
-    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
-        <img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
-    </div>
-    {{ else }}
-    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
-    {{ end }}
-{{ end }}
-{{ else }}
-    {{ if $gs.NpcHere $xr $yr }}
-    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> 
-        <img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
-    </div>
-    {{ else }}
-    <div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
-    {{ end }}
-{{ end }}
-{{ end }}
-{{ end }}
+	{{ range $xr := $xs }}
+
+		{{ if (and ($gs.ProtagHere $xr $yr) ($gs.NpcHere $xr $yr)) }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}">
+					<img id="mapcharshared" src="./static/img/ginquestprotag-kougra0.1.png"></img>
+					<img class="mapnpcshared" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
 			</div>
+		{{ else if (and ($gs.ProtagHere $xr $yr) ($gs.PortalHere $xr $yr)) }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}">
+					<img id="mapcharshared" src="./static/img/ginquestprotag-kougra0.1.png"></img>
+					<img class="maplocshared" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+			</div>
+		{{ else if $gs.ProtagHere $xr $yr }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}">
+					<img id="mapchar" src="./static/img/ginquestprotag-kougra0.1.png"></img>
+			</div>
+		{{ else if $gs.NpcHere $xr $yr }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}">
+					<img class="mapnpc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+			</div>
+		{{ else if $gs.PortalHere $xr $yr }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}">
+					<img class="maploc" src="./static/img/{{ $gs.GetGridLocImg $xr $yr }}"></img>
+			</div>
+		{{ else }}
+			<div class="map {{ $gs.GetGridLocClass $xr $yr }}"> </div>
+		{{ end }}
+
+	{{ end }}
+{{ end }}
+</div>
+
 {{ end }}

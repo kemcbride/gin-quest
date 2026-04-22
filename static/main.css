@@ -56,9 +56,33 @@ body {
     object-fit: scale-down;
 }
 
+#mapcharshared {
+    width: 50%;
+    height: 50%;
+    object-fit: scale-down;
+}
+
 .mapnpc {
     width: 90%;
     height: 90%;
+    object-fit: scale-down;
+}
+
+.maploc {
+    width: 90%;
+    height: 90%;
+    object-fit: scale-down;
+}
+
+.mapnpcshared {
+    width: 50%;
+    height: 50%;
+    object-fit: scale-down;
+}
+
+.maplocshared {
+    width: 50%;
+    height: 50%;
     object-fit: scale-down;
 }
 

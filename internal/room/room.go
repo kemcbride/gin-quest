@@ -122,12 +122,26 @@ func (r *Room) GetGridLocImg(x int, y int) string {
 			return npc.Img
 		}
 	}
+	for _, portal := range r.Portals {
+		if portal.Loc.X == x && portal.Loc.Y == y {
+			return portal.Img
+		}
+	}
 	return s
 }
 
 func (r *Room) NpcHere(x int, y int) bool {
 	for _, npc := range r.Npcs {
 		if npc.Loc.X == x && npc.Loc.Y == y {
+			return true
+		}
+	}
+	return false
+}
+
+func (r *Room) PortalHere(x int, y int) bool {
+	for _, portal := range r.Portals {
+		if portal.Loc.X == x && portal.Loc.Y == y {
 			return true
 		}
 	}
