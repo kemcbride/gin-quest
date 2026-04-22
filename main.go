@@ -18,6 +18,9 @@ import (
 //go:embed static
 var server embed.FS
 
+//go:embed favi
+var favicons embed.FS
+
 const cookieAge int = 3600 * 24 * 7 // 1 week?
 var domain string = "kemcbride.noho.st"
 
@@ -91,7 +94,7 @@ func Game(c *gin.Context) {
 func staticCacheMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// From https://github.com/gin-gonic/gin/issues/3675
-		if strings.HasPrefix(c.Request.URL.Path, "/gin-quest/static/") {
+		if strings.HasPrefix(c.Request.URL.Path, "/gin-quest/static/") || strings.HasPrefix(c.Request.URL.Path, "/favi") {
 			c.Header("Cache-Control", "private, max-age=86400")
 		}
 		c.Next()
@@ -113,8 +116,13 @@ func main() {
 		domain = ""
 	}
 
-	// r.LoadHTMLGlob("templates/*")
 	fs, err := static.EmbedFolder(server, "static")
+	if err != nil {
+		panic(err)
+	}
+
+	// FFS for favicon file system, obviously!
+	ffs, err := static.EmbedFolder(favicons, "favi")
 	if err != nil {
 		panic(err)
 	}
@@ -138,6 +146,7 @@ func main() {
 	r.Use(staticCacheMiddleware())
 	// Serve static stuff so we can template it into html, etc
 	r.Use(static.Serve("/gin-quest/static/", fs))
+	r.Use(static.Serve("/", ffs))
 
 	// r.NoRoute(func(c *gin.Context) {
 	// 	fmt.Printf("%s doesn't exist, redirect on /\n", c.Request.URL.Path)
@@ -153,34 +162,6 @@ func main() {
 	}
 }
 
-// From https://github.com/gin-contrib/multitemplate?tab=readme-ov-file#advanced-example
-// func loadTemplates(path string) multitemplate.Renderer {
-// 	r := multitemplate.NewRenderer()
-// 	layouts, err := filepath.Glob(path + "/layouts/*.html")
-// 	if err != nil {
-// 	  panic(err.Error())
-// 	}
-//
-//     for _, layout := range layouts {
-//         fmt.Println(layout)
-//         fmt.Println(filepath.Base(layout))
-//     }
-//
-// 	includes, err := filepath.Glob(path + "/includes/*.html")
-// 	if err != nil {
-// 	  panic(err.Error())
-// 	}
-//
-//     // Generate our templates map from our layouts/ and includes/ directories
-//     for _, include := range includes {
-//       layoutCopy := make([]string, len(layouts))
-//       copy(layoutCopy, layouts)
-//       files := append(layoutCopy, include)
-//       r.AddFromFiles(filepath.Base(include), files...)
-//     }
-//     return r
-// }
-
 // https://gin-gonic.com/en/docs/rendering/multiple-template/
 func createMyRender() multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
@@ -188,15 +169,3 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("googoogaga", "./templates/layouts/game.html", "templates/includes/map.html", "templates/includes/menu.html")
 	return r
 }
-
-// also from https://gin-gonic.com/en/docs/rendering/multiple-template/
-// // renderTemplate is a wrapper around template.ExecuteTemplate.
-// func renderTemplate(w http.ResponseWriter, name string, data map[string]interface{}) error {
-// 	// Ensure the template exists in the map.
-// 	tmpl, ok := templates[name]
-// 	if !ok {
-// 		return fmt.Errorf("The template %s does not exist.", name)
-// 	}
-//
-// 	return tmpl.ExecuteTemplate(w, "base.tmpl", data)
-// }
