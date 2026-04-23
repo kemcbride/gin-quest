@@ -11,7 +11,7 @@
 		{
 			"name": "Chia Town",
 			"loc": {"X": 1, "Y": 2},
-			"map": "mh04i224",
+			"map": "chia-town",
 			"destloc": {"X": 3, "Y": 2},
 			"img": "ginquestlocation-town0.1.png"
 		}

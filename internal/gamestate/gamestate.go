@@ -1,6 +1,7 @@
 package gamestate
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 
@@ -111,10 +112,31 @@ func (gs *GameState) MoveRight() {
 	}
 }
 
+func (gs *GameState) Portal(server embed.FS) error {
+	if gs.Room.PortalHere(gs.Save.X, gs.Save.Y) {
+		// We know there's a portal where the Protagonist is standing.
+		portal, found := gs.Room.GetPortal(gs.Save.X, gs.Save.Y)
+		if !found {
+			return nil // return without modifying game state, eg. going thru portal
+		}
+		// Update GameState to be in new room at destloc from portal
+		gs.Save.RoomKey = portal.Map
+		fmt.Println(portal.Map)
+		gs.Save.X = portal.DestLoc.X
+		gs.Save.Y = portal.DestLoc.Y
+		gs.Room = gs.GetCurrRoom()
+		fmt.Println(gs.GetCurrRoomName())
+		gs.Room.LoadMap(server)
+		gs.Room.LoadMeta(server)
+	}
+	return nil
+}
+
 func (gs *GameState) GetRoomHash() map[string]room.Room {
 	var roomMap = map[string]room.Room{
-		"mh04i224": room.Room{Id: "mh04i224", Name: "Continent of Euniciar"},
-		"mh04dw5i": room.Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
+		"mh04i224":  room.Room{Id: "mh04i224", Name: "Continent of Euniciar"},
+		"mh04dw5i":  room.Room{Id: "mh04dw5i", Name: "Land of Patricolia"},
+		"chia-town": room.Room{Id: "chia-town", Name: "Chia Town"},
 	}
 	return roomMap
 }

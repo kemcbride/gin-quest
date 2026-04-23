@@ -60,6 +60,11 @@ func Game(c *gin.Context) {
 	gs.Room = gs.GetCurrRoom()
 	gs.Room.LoadMap(server)
 	gs.Room.LoadMeta(server)
+
+	// if the query involved a portal, try that before other motion:
+	if _, portal := c.GetQuery("portal"); portal {
+		_ = gs.Portal(server)
+	}
 	// Let's check the query path and respond to up, down, left, right.
 	if _, up := c.GetQuery("up"); up {
 		gs.MoveUp()

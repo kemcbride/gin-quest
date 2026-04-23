@@ -105,11 +105,20 @@ func (r *Room) GetGridLoc(x int, y int) string {
 
 func (r *Room) GetGridLocClass(x int, y int) string {
 	var classMap = map[string]string{
-		".": "desert",
-		"^": "mountain",
-		"~": "water",
-		"#": "grass",
-		"Q": "abyss",
+		".":  "desert",
+		"^":  "mountain",
+		"~":  "water",
+		"#":  "grass",
+		"Q":  "abyss",
+		"$":  "red-carpet",
+		"%":  "blue-carpet",
+		"&":  "green-carpet",
+		"*":  "snow",
+		"-":  "dirt",
+		"_":  "stone",
+		"+":  "swamp",
+		"|":  "forest",
+		"\\": "plains",
 	}
 	return classMap[r.GetGridLoc(x, y)]
 }
@@ -146,4 +155,13 @@ func (r *Room) PortalHere(x int, y int) bool {
 		}
 	}
 	return false
+}
+
+func (r *Room) GetPortal(x int, y int) (Portal, bool) {
+	for _, portal := range r.Portals {
+		if portal.Loc.X == x && portal.Loc.Y == y {
+			return portal, true
+		}
+	}
+	return Portal{}, false
 }
