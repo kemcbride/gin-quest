@@ -11,14 +11,14 @@ body {
 
 #map {
   --approx-map-width: 45vw;
-  --columns: 7;
-  --gutters: 8;
-  --gutter-size: 0.3em;
+  --map-columns: 7;
+  --map-gutters: 8;
+  --map-gutter-size: 0.3em;
 
   display: grid;
   flex: 0 0 auto;
-  grid-template-columns: repeat(var(--columns), calc(var(--approx-map-width)/var(--columns) - var(--gutter-size)*var(--gutters)/var(--columns)));
-  grid-auto-rows: calc(var(--approx-map-width)/var(--columns) - var(--gutter-size)*var(--gutters)/var(--columns));
+  grid-template-columns: repeat(var(--map-columns), calc(var(--approx-map-width)/var(--map-columns) - var(--map-gutter-size)*var(--map-gutters)/var(--map-columns)));
+  grid-auto-rows: calc(var(--approx-map-width)/var(--map-columns) - var(--map-gutter-size)*var(--map-gutters)/var(--map-columns));
   gap: 5px;
   margin: 20px;
   width: 50%;
@@ -87,9 +87,14 @@ body {
 }
 
 .controls {
+  --approx-c-width: 15vw;
+  --c-columns: 3;
+  --c-gutters: 4;
+  --c-gutter-size: 0.05em;
+
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 30;
+  grid-template-columns: repeat(var(--c-columns), calc(var(--approx-c-width)/var(--c-columns) - var(--c-gutter-size)*var(--c-gutters)/var(--c-columns)));
+  grid-auto-rows: calc(var(--approx-c-width)/var(--c-columns) - var(--c-gutter-size)*var(--c-gutters)/var(--c-columns));
   gap: 5;
   margin: auto;
   width: 50%;
