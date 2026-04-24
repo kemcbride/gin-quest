@@ -1,0 +1,27 @@
+{
+	"npcs": [
+		{
+			"name": "Chia Dude",
+			"loc": {"X": 0, "Y": 0},
+			"img": "ginquestnpc-chia0.1.png",
+			"interaction": "0"
+		},
+		{
+			"name": "Chia Guy",
+			"loc": {"X": -4, "Y": -6},
+			"img": "ginquestnpc-chia0.1.png",
+			"interaction": "0"
+		}
+	],
+	"portals": [
+		{
+			"name": "Euniciar",
+			"loc": {"X": 5, "Y": 6},
+			"map": "mh04i224",
+			"destloc": {"X": 1, "Y": 2},
+			"img": "ginquestlocation-town0.1.png"
+		}
+	],
+	"areas": []
+}
+

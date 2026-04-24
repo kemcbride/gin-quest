@@ -157,6 +157,15 @@ func (r *Room) PortalHere(x int, y int) bool {
 	return false
 }
 
+func (r *Room) GetNpc(x int, y int) (Npc, bool) {
+	for _, npc := range r.Npcs {
+		if npc.Loc.X == x && npc.Loc.Y == y {
+			return npc, true
+		}
+	}
+	return Npc{}, false
+}
+
 func (r *Room) GetPortal(x int, y int) (Portal, bool) {
 	for _, portal := range r.Portals {
 		if portal.Loc.X == x && portal.Loc.Y == y {
@@ -164,4 +173,22 @@ func (r *Room) GetPortal(x int, y int) (Portal, bool) {
 		}
 	}
 	return Portal{}, false
+}
+
+func (r *Room) GetNpcNameHere(x int, y int) string {
+	if npc, found := r.GetNpc(x, y); found {
+		return npc.Name
+	}
+	return ""
+}
+
+func (r *Room) GetPortalNameHere(x int, y int) string {
+	if portal, found := r.GetPortal(x, y); found {
+		return portal.Name
+	}
+	return ""
+}
+
+func (r *Room) GetDescriptionHere(x int, y int) string {
+	return "You're somewhere alright."
 }
