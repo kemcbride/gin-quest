@@ -1,7 +1,25 @@
 {{ define "menu" }}
+
+{{ $xr := .gs.Save.X }}
+{{ $yr := .gs.Save.Y }}
+
 <div class="menu">
 	<div class="character">
 		<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
+		{{ if (or (.gs.Room.NpcHere $xr $yr) (.gs.Room.PortalHere $xr $yr)) }}
+			<img src="./static/img/{{ .gs.GetGridLocImg $xr $yr }}"></img>
+		{{ end }}
+	</div>
+	<div class="description">
+		{{- .gs.Room.GetDescriptionHere $xr $yr -}}
+		</br>
+		{{ if .gs.Room.NpcHere $xr $yr }}
+			{{ $npcname := .gs.Room.GetNpcNameHere $xr $yr }}
+			You see {{ $npcname }} milling around here. Go and <a href=".?talk">talk to them?</a>
+		{{ else if .gs.Room.PortalHere $xr $yr }}
+			{{ $portalname := .gs.Room.GetPortalNameHere $xr $yr }}
+			You see the entrance to {{ $portalname }} here. <a href=".?portal">Go?</a>
+		{{ end }}
 	</div>
 	<div class="controls">
 		<div class="dir" onclick="window.location.href='.?up&left';">

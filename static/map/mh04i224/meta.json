@@ -1,7 +1,7 @@
 {
 	"npcs": [
 		{
-			"name": "Turt",
+			"name": "Recurtum",
 			"loc": {"X": 0, "Y": 0},
 			"img": "ginquestnpc-turtum0.1.png",
 			"interaction": "0"
@@ -12,7 +12,7 @@
 			"name": "Chia Town",
 			"loc": {"X": 1, "Y": 2},
 			"map": "chia-town",
-			"destloc": {"X": 3, "Y": 2},
+			"destloc": {"X": 5, "Y": 6},
 			"img": "ginquestlocation-town0.1.png"
 		}
 	],
