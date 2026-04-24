@@ -95,8 +95,15 @@ func (r *Room) LoadMeta(server embed.FS) {
 func (r *Room) GetGridLoc(x int, y int) string {
 	adjustedX := max(0, len(r.Grid[0])/2+x)
 	adjustedY := max(0, len(r.Grid)/2+y)
-	// Dumb exit to send weird letter we can map to some style
+	// If x or y invalid - just return abyss
 	if (adjustedX < 0 || adjustedX >= len(r.Grid[0])) || (adjustedY < 0 || adjustedY >= len(r.Grid)) {
+		return "Q"
+	}
+
+	// if len(row) is 0, it means our multidimensional array initialized with an empty string
+	// - eg. not part of the original grid. So this is off the edge of the map => abyss (Q)
+	row := r.Grid[adjustedY]
+	if len(row) == 0 {
 		return "Q"
 	}
 	loc := r.Grid[adjustedY][adjustedX]
