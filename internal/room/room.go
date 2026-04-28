@@ -195,7 +195,3 @@ func (r *Room) GetPortalNameHere(x int, y int) string {
 	}
 	return ""
 }
-
-func (r *Room) GetDescriptionHere(x int, y int) string {
-	return "You're somewhere alright."
-}

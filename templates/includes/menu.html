@@ -11,14 +11,13 @@
 		{{ end }}
 	</div>
 	<div class="description">
-		{{- .gs.Room.GetDescriptionHere $xr $yr -}}
 		</br>
 		{{ if .gs.Room.NpcHere $xr $yr }}
 			{{ $npcname := .gs.Room.GetNpcNameHere $xr $yr }}
-			You see {{ $npcname }} milling around here. Go and <a href=".?talk">talk to them?</a>
+			You see {{ $npcname }} milling around here. <a href=".?talk">Talk?</a>
 		{{ else if .gs.Room.PortalHere $xr $yr }}
 			{{ $portalname := .gs.Room.GetPortalNameHere $xr $yr }}
-			You see the entrance to {{ $portalname }} here. <a href=".?portal">Go?</a>
+			You see {{ $portalname }} here. <a href=".?portal">Go?</a>
 		{{ end }}
 	</div>
 	<div class="controls">
@@ -47,9 +46,6 @@
 		<div class="dir" onclick="window.location.href='.?down&right';">
 			↘
 		</div>
-	</div>
-	<div class="status">
-		{{ .gs.GetStatusBlurb }}
 	</div>
 </div>
 {{ end }}
