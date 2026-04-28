@@ -6,15 +6,19 @@
 	</head>
 
 	<body>
-		<h2> {{ .gs.GetCurrRoomName }} </h2>
+		{{ template "status" . }}
 
-		{{ $xs := .xrange }}
-		{{ $ys := .yrange }}
-		{{ $gs := .gs }}
 		<div class="container">
-			{{ template "map" . }}
-
-			{{ template "menu" . }}
+			{{ if (eq .gs.Save.State 0) }}
+				{{ template "map" . }}
+				{{ template "menu" . }}
+			{{ else if (eq .gs.Save.State 1) }}
+				{{ template "conversation" . }}
+			{{ else if (eq .gs.Save.State 2) }}
+				{{ template "misc" . }}
+			{{ else if (eq .gs.Save.State 3) }}
+				{{ template "battle" . }}
+			{{ end }}
 		</div>
 
 

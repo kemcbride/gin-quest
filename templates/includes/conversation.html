@@ -1,0 +1,20 @@
+{{ define "conversation" }}
+
+<div class="conversation">
+	<div class="character">
+		<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
+		{{ if .gs.Room.NpcHere .gs.Save.X .gs.Save.Y }}
+			<img src="./static/img/{{ .gs.GetGridLocImg .gs.Save.X .gs.Save.Y }}"></img>
+		{{ end }}
+	</div>
+	<div class="description">
+		</br>
+		{{ if .gs.Room.NpcHere .gs.Save.X .gs.Save.Y }}
+			{{ $npcname := .gs.Room.GetNpcNameHere .gs.Save.X .gs.Save.Y }}
+			You're talking with {{ $npcname }}.
+		{{ end }}
+		</br>
+		<a href=".?move">Return to map?</a>
+	</div>
+</div>
+{{ end }}
