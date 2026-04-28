@@ -8,11 +8,20 @@ import (
 	"github.com/kemcbride/gin-quest/internal/room"
 )
 
+type State int // Kind of like "mode" for the UI/potential actions
+
+const (
+    StateExplore State = iota
+    StateTalk
+    StateMenu
+    StateBattle
+)
+
 type GameSave struct {
 	X       int    `json:"x"`
 	Y       int    `json:"y"`
 	RoomKey string `json:"roomkey"`
-	State   int    `json:"state"`
+	State   State  `json:"state"`
 }
 
 type GameState struct {
@@ -70,6 +79,9 @@ func (gs *GameState) GetStatusBlurb() string {
 }
 
 func (gs *GameState) CanMove(dx int, dy int) bool {
+	if gs.Save.State != StateExplore {
+		return false
+	}
 	// For now, we just want to check if it's water or mountain
 	// Or, the edge of the map.
 	// Eventually could handle a case where we fly or swim.
@@ -120,15 +132,25 @@ func (gs *GameState) Portal(server embed.FS) error {
 			return nil // return without modifying game state, eg. going thru portal
 		}
 		// Update GameState to be in new room at destloc from portal
+		gs.Save.State = StateExplore
 		gs.Save.RoomKey = portal.Map
-		fmt.Println(portal.Map)
 		gs.Save.X = portal.DestLoc.X
 		gs.Save.Y = portal.DestLoc.Y
 		gs.Room = gs.GetCurrRoom()
-		fmt.Println(gs.GetCurrRoomName())
 		gs.Room.LoadMap(server)
 		gs.Room.LoadMeta(server)
 	}
+	return nil
+}
+
+func (gs *GameState) Talk(server embed.FS) error {
+	_, found := gs.Room.GetNpc(gs.Save.X, gs.Save.Y)
+	if !found {
+		return nil // return without modifying game state, eg. going thru portal
+	}
+	// Update GameState to be in new room at destloc from portal
+	gs.Save.State = StateTalk
+	// This breaks everything LOL and also how do we know that it's happening??
 	return nil
 }
 
@@ -151,6 +173,11 @@ func (gs *GameState) GetCurrRoom() room.Room {
 
 func (gs *GameState) GetCurrRoomName() string {
 	return gs.GetRoomHash()[gs.Save.RoomKey].Name
+}
+
+func (gs *GameState) GetCurrRoomDescription() string {
+	// TODO: Have this use the description fields from meta.json
+	return fmt.Sprintf("You're somewhere in %s.", gs.Room.Name)
 }
 
 func (gs *GameState) GetMapRange(coord int, size int) []int {

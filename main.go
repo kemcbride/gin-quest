@@ -61,20 +61,30 @@ func Game(c *gin.Context) {
 	gs.Room.LoadMap(server)
 	gs.Room.LoadMeta(server)
 
-	// if the query involved a portal, try that before other motion:
-	if _, portal := c.GetQuery("portal"); portal {
-		_ = gs.Portal(server)
+
+	if _, talk := c.GetQuery("talk"); talk {
+		_ = gs.Talk(server)
+	} else if _, move := c.GetQuery("move"); move { // If doing talk, don't do other motion actions
+		gs.Save.State = gamestate.StateExplore
 	}
-	// Let's check the query path and respond to up, down, left, right.
-	if _, up := c.GetQuery("up"); up {
-		gs.MoveUp()
-	} else if _, down := c.GetQuery("down"); down {
-		gs.MoveDown()
-	}
-	if _, left := c.GetQuery("left"); left {
-		gs.MoveLeft()
-	} else if _, right := c.GetQuery("right"); right {
-		gs.MoveRight()
+
+	if gs.Save.State == gamestate.StateExplore {
+		// Handle Explore-based query options
+		// if the query involved a portal, try that before other motion:
+		if _, portal := c.GetQuery("portal"); portal {
+			_ = gs.Portal(server)
+		}
+		// Let's check the query path and respond to up, down, left, right.
+		if _, up := c.GetQuery("up"); up {
+			gs.MoveUp()
+		} else if _, down := c.GetQuery("down"); down {
+			gs.MoveDown()
+		}
+		if _, left := c.GetQuery("left"); left {
+			gs.MoveLeft()
+		} else if _, right := c.GetQuery("right"); right {
+			gs.MoveRight()
+		}
 	}
 
 	// Save the game state back
@@ -85,10 +95,8 @@ func Game(c *gin.Context) {
 	}
 	c.SetCookie("game", string(j), cookieAge, "/", domain, false, true)
 
-	c.HTML(http.StatusOK, "googoogaga", gin.H{
+	c.HTML(http.StatusOK, "game", gin.H{
 		"title":  "Game Page",
-		"x":      gs.Save.X,
-		"y":      gs.Save.Y,
 		"room":   gs.GetCurrRoom(),
 		"gs":     &gs,
 		"xrange": gs.GetMapRange(gs.Save.X, 3),
@@ -171,6 +179,15 @@ func main() {
 func createMyRender() multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
 	r.AddFromFiles("index", "./templates/layouts/index.html")
-	r.AddFromFiles("googoogaga", "./templates/layouts/game.html", "templates/includes/map.html", "templates/includes/menu.html")
+	r.AddFromFiles(
+		"game",
+		"./templates/layouts/game.html",
+		"templates/includes/map.html",
+		"templates/includes/menu.html",
+		"templates/includes/status.html",
+		"templates/includes/conversation.html",
+		"templates/includes/misc.html", // Resolves to top-level Menus (items, skills)
+		"templates/includes/battle.html",
+	)
 	return r
 }
