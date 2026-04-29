@@ -61,7 +61,6 @@ func Game(c *gin.Context) {
 	gs.Room.LoadMap(server)
 	gs.Room.LoadMeta(server)
 
-
 	if _, talk := c.GetQuery("talk"); talk {
 		_ = gs.Talk(server)
 	} else if _, move := c.GetQuery("move"); move { // If doing talk, don't do other motion actions
@@ -87,6 +86,9 @@ func Game(c *gin.Context) {
 		}
 	}
 
+	// Always pass "say" through, though 99% of the time it'll be empty? Clunky, huh.
+	say, _ := c.GetQuery("say")
+
 	// Save the game state back
 	j, err := gs.Save.ToJson()
 	if err != nil {
@@ -101,6 +103,7 @@ func Game(c *gin.Context) {
 		"gs":     &gs,
 		"xrange": gs.GetMapRange(gs.Save.X, 3),
 		"yrange": gs.GetMapRange(gs.Save.Y, 3),
+		"say":    say,
 	})
 }
 
@@ -188,6 +191,7 @@ func createMyRender() multitemplate.Renderer {
 		"templates/includes/conversation.html",
 		"templates/includes/misc.html", // Resolves to top-level Menus (items, skills)
 		"templates/includes/battle.html",
+		"templates/includes/conversations/recurtum.html", // Template per convo
 	)
 	return r
 }

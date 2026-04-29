@@ -40,6 +40,12 @@ body {
     margin: auto;
 }
 
+#convo-character {
+    justify-content: center;
+    width: 100%;
+    margin: 2vw 0;
+}
+
 .menu {
     display: flex;
     flex-direction: column;

@@ -1,7 +1,7 @@
 {{ define "conversation" }}
 
 <div class="conversation">
-	<div class="character">
+	<div class="character" id="convo-character">
 		<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
 		{{ if .gs.Room.NpcHere .gs.Save.X .gs.Save.Y }}
 			<img src="./static/img/{{ .gs.GetGridLocImg .gs.Save.X .gs.Save.Y }}"></img>
@@ -12,6 +12,10 @@
 		{{ if .gs.Room.NpcHere .gs.Save.X .gs.Save.Y }}
 			{{ $npcname := .gs.Room.GetNpcNameHere .gs.Save.X .gs.Save.Y }}
 			You're talking with {{ $npcname }}.
+			</br>
+			{{ if (eq $npcname "Recurtum") }}
+			{{ template "recurtum" . }}
+			{{ end }}
 		{{ end }}
 		</br>
 		<a href=".?move">Return to map?</a>
