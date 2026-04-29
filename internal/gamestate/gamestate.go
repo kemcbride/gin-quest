@@ -11,10 +11,10 @@ import (
 type State int // Kind of like "mode" for the UI/potential actions
 
 const (
-    StateExplore State = iota
-    StateTalk
-    StateMenu
-    StateBattle
+	StateExplore State = iota
+	StateTalk
+	StateMenu
+	StateBattle
 )
 
 type GameSave struct {

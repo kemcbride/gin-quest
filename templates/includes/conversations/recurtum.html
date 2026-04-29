@@ -1,0 +1,30 @@
+{{ define "recurtum" }}
+
+</br>
+<i>
+{{ if (eq .say "") }}
+Oh. Hey. I'm Recurtum, hanging around central Euniciar for fun.
+
+{{else if (eq .say "fun") }}
+For fun? Oh. Hey. Yeah, I like hanging around here, that's fun for me.
+
+{{ else if (eq .say "here") }}
+Hey, yeah. Oh. Here, it's cool - it's cool because it's so good for hanging around.
+</br>
+Nothing scary or weird here. All the creatures around here are just friendly and fun.
+
+{{ end }}
+
+</i>
+
+</br>
+</br>
+</br>
+Say:
+</br>
+</br>
+What do you like to do for <a href=".?say=fun">fun?</a>
+</br>
+Why do you like to hang out <a href=".?say=here">here?</a>
+</br>
+{{ end }}
