@@ -61,6 +61,10 @@ func Game(c *gin.Context) {
 	gs.Room.LoadMap(server)
 	gs.Room.LoadMeta(server)
 
+	if _, menu := c.GetQuery("menu"); menu {
+		gs.Save.State = gamestate.StateMenu
+	}
+
 	if _, talk := c.GetQuery("talk"); talk {
 		_ = gs.Talk(server)
 	} else if _, move := c.GetQuery("move"); move { // If doing talk, don't do other motion actions
