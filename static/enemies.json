@@ -1,0 +1,12 @@
+{
+	"enemies": {
+		"Recurtum": {
+			"level": 100,
+			"healthmax": 100,
+			"strength": 0,
+			"defence": 1,
+			"avoid": 0,
+			"hitrate": 0
+		}
+	}
+}

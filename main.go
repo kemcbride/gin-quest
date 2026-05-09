@@ -36,6 +36,7 @@ func Game(c *gin.Context) {
 			Y:       0,
 			RoomKey: "mh04i224",
 			State:   0,
+			Level:   1,
 		}
 
 		// Initiialize a fresh game

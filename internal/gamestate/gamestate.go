@@ -22,6 +22,7 @@ type GameSave struct {
 	Y       int    `json:"y"`
 	RoomKey string `json:"roomkey"`
 	State   State  `json:"state"`
+	Level   int    `json:"level"`
 }
 
 type GameState struct {
@@ -43,6 +44,10 @@ func GameSaveFromJson(b []byte) (*GameSave, error) {
 	err := json.Unmarshal(b, &gs)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshaling gamesave: %v, %s", err, b)
+	}
+
+	if gs.Level <= 0 {
+		return nil, fmt.Errorf("error loading gamesave from json: level cannot be <= 0, %d", gs.Level)
 	}
 	return gs, nil
 }
