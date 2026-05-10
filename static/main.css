@@ -56,7 +56,6 @@ body {
 .character {
   display: flex;
   align-items: center;
-  width: 50%;
   margin: 10%;
 }
 
@@ -107,7 +106,6 @@ body {
   grid-auto-rows: calc(var(--approx-c-width)/var(--c-columns) - var(--c-gutter-size)*var(--c-gutters)/var(--c-columns));
   gap: 0.05vw;
   margin: auto;
-  width: 50%;
 }
 
 .dir {
