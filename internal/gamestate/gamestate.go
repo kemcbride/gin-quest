@@ -23,6 +23,7 @@ type GameSave struct {
 	RoomKey string `json:"roomkey"`
 	State   State  `json:"state"`
 	Level   int    `json:"level"`
+	Name    string `json:"name"`
 }
 
 type GameState struct {
@@ -81,6 +82,14 @@ func (gs *GameState) String() string {
 
 func (gs *GameState) GetStatusBlurb() string {
 	return "Status: All good!"
+}
+
+func (gs *GameState) GetName() string {
+	return gs.Save.Name
+}
+
+func (gs *GameState) GetLevel() int {
+	return gs.Save.Level
 }
 
 func (gs *GameState) CanMove(dx int, dy int) bool {

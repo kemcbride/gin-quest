@@ -6,6 +6,7 @@ import (
 	// "path/filepath"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
@@ -24,6 +25,10 @@ var favicons embed.FS
 const cookieAge int = 3600 * 24 * 7 // 1 week?
 var domain string = "kemcbride.noho.st"
 
+func NewGame(c *gin.Context) {
+	c.HTML(http.StatusOK, "newgame", gin.H{})
+}
+
 func Game(c *gin.Context) {
 	// Load the game state
 	cookie, err := c.Cookie("game")
@@ -37,6 +42,7 @@ func Game(c *gin.Context) {
 			RoomKey: "mh04i224",
 			State:   0,
 			Level:   1,
+			Name:    "ProtagonistKougra",
 		}
 
 		// TODO: this would be where we insert the logic of new game setup.
@@ -48,12 +54,8 @@ func Game(c *gin.Context) {
 		gs.Room.LoadMap(server)
 		gs.Room.LoadMeta(server)
 
-		blankGameSaveJson, err := gs.Save.ToJson()
-		if err != nil {
-			// TODO - dumb and lazy
-			panic(err)
-		}
-		c.SetCookie("game", string(blankGameSaveJson), cookieAge, "/", domain, false, true)
+		// blankGameSaveJson, err := gs.Save.ToJson()
+		// c.SetCookie("game", string(blankGameSaveJson), cookieAge, "/", domain, false, true)
 	}
 
 	gs := gamestate.GameState{
@@ -113,6 +115,40 @@ func Game(c *gin.Context) {
 	})
 }
 
+func handleNewGameSubmission(c *gin.Context) {
+	name := c.DefaultPostForm("name", "ProtagonistKougra")
+	levelStr := c.DefaultPostForm("level", "1")
+	level, err := strconv.Atoi(levelStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Age must be a valid number",
+		})
+		return
+	}
+	// Update cookie data
+	gsave := &gamestate.GameSave{
+		X:       0,
+		Y:       0,
+		RoomKey: "mh04i224",
+		State:   0,
+		Level:   level,
+		Name:    name,
+	}
+
+	// Initiialize a fresh game
+	gs := gamestate.GameState{
+		Save: *gsave,
+	}
+	newGameSaveJson, err := gs.Save.ToJson()
+	if err != nil {
+		// TODO - dumb and lazy
+		panic(err)
+	}
+	c.SetCookie("game", string(newGameSaveJson), cookieAge, "/", domain, false, true)
+
+	c.Redirect(http.StatusFound, "/gin-quest/game")
+}
+
 func staticCacheMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// From https://github.com/gin-gonic/gin/issues/3675
@@ -162,6 +198,9 @@ func main() {
 		})
 	})
 
+	r.POST("/newgame", handleNewGameSubmission)
+
+	r.GET("/gin-quest/newgame", NewGame)
 	r.GET("/gin-quest/game", Game)
 	r.GET("/gin-quest/", Game)
 
@@ -187,10 +226,11 @@ func main() {
 // https://gin-gonic.com/en/docs/rendering/multiple-template/
 func createMyRender() multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
-	r.AddFromFiles("index", "./templates/layouts/index.html")
+	r.AddFromFiles("index", "templates/layouts/index.html")
+	r.AddFromFiles("newgame", "templates/layouts/newgame.html", "templates/includes/newgameform.html")
 	r.AddFromFiles(
 		"game",
-		"./templates/layouts/game.html",
+		"templates/layouts/game.html",
 		"templates/includes/map.html",
 		"templates/includes/menu.html",
 		"templates/includes/status.html",
