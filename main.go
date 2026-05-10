@@ -35,27 +35,9 @@ func Game(c *gin.Context) {
 	bytes := []byte(cookie)
 	gsave, jsonLoadErr := gamestate.GameSaveFromJson(bytes)
 
+	// Reset or invalid game state => newgame form
 	if _, reset := c.GetQuery("reset"); (err != nil) || reset || jsonLoadErr != nil {
-		gsave = &gamestate.GameSave{
-			X:       0,
-			Y:       0,
-			RoomKey: "mh04i224",
-			State:   0,
-			Level:   1,
-			Name:    "ProtagonistKougra",
-		}
-
-		// TODO: this would be where we insert the logic of new game setup.
-		// Initiialize a fresh game
-		gs := gamestate.GameState{
-			Save: *gsave,
-		}
-		gs.Room = gs.GetCurrRoom()
-		gs.Room.LoadMap(server)
-		gs.Room.LoadMeta(server)
-
-		// blankGameSaveJson, err := gs.Save.ToJson()
-		// c.SetCookie("game", string(blankGameSaveJson), cookieAge, "/", domain, false, true)
+		c.Redirect(http.StatusFound, "/gin-quest/newgame")
 	}
 
 	gs := gamestate.GameState{
