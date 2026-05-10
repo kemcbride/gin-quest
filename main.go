@@ -6,7 +6,6 @@ import (
 	// "path/filepath"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
@@ -99,21 +98,13 @@ func Game(c *gin.Context) {
 
 func handleNewGameSubmission(c *gin.Context) {
 	name := c.DefaultPostForm("name", "ProtagonistKougra")
-	levelStr := c.DefaultPostForm("level", "1")
-	level, err := strconv.Atoi(levelStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Age must be a valid number",
-		})
-		return
-	}
 	// Update cookie data
 	gsave := &gamestate.GameSave{
 		X:       0,
 		Y:       0,
 		RoomKey: "mh04i224",
 		State:   0,
-		Level:   level,
+		Level:   1,
 		Name:    name,
 	}
 
