@@ -39,6 +39,7 @@ func Game(c *gin.Context) {
 			Level:   1,
 		}
 
+		// TODO: this would be where we insert the logic of new game setup.
 		// Initiialize a fresh game
 		gs := gamestate.GameState{
 			Save: *gsave,
