@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/kemcbride/gin-quest/internal/room"
+	"github.com/kemcbride/gin-quest/internal/skills"
 )
 
 type State int // Kind of like "mode" for the UI/potential actions
@@ -13,8 +14,10 @@ type State int // Kind of like "mode" for the UI/potential actions
 const (
 	StateExplore State = iota
 	StateTalk
-	StateMenu
 	StateBattle
+	StateSkills
+	StateInventory
+	StateOptions
 )
 
 type GameSave struct {
@@ -24,6 +27,7 @@ type GameSave struct {
 	State   State  `json:"state"`
 	Level   int    `json:"level"`
 	Name    string `json:"name"`
+	// SkillLevels [string]int `json:"skilllevels"` // how do maps work???
 }
 
 type GameState struct {
@@ -220,4 +224,8 @@ func (gs *GameState) NpcHere(x int, y int) bool {
 
 func (gs *GameState) PortalHere(x int, y int) bool {
 	return gs.Room.PortalHere(x, y)
+}
+
+func (gs *GameState) GetStrengthSkill() skills.Skill {
+	return skills.StrengthSkill
 }

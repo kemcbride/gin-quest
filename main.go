@@ -46,8 +46,12 @@ func Game(c *gin.Context) {
 	gs.Room.LoadMap(server)
 	gs.Room.LoadMeta(server)
 
-	if _, menu := c.GetQuery("menu"); menu {
-		gs.Save.State = gamestate.StateMenu
+	if _, options := c.GetQuery("options"); options {
+		gs.Save.State = gamestate.StateOptions
+	} else if _, skills := c.GetQuery("skills"); skills {
+		gs.Save.State = gamestate.StateSkills
+	} else if _, inventory := c.GetQuery("inventory"); inventory {
+		gs.Save.State = gamestate.StateInventory
 	}
 
 	if _, talk := c.GetQuery("talk"); talk {
@@ -208,7 +212,9 @@ func createMyRender() multitemplate.Renderer {
 		"templates/includes/menu.html",
 		"templates/includes/status.html",
 		"templates/includes/conversation.html",
-		"templates/includes/misc.html", // Resolves to top-level Menus (items, skills)
+		"templates/includes/options.html",
+		"templates/includes/skills.html",
+		"templates/includes/inventory.html",
 		"templates/includes/battle.html",
 		"templates/includes/conversations/recurtum.html", // Template per convo
 	)
