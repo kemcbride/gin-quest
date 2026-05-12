@@ -15,9 +15,13 @@
 			{{ else if (eq .gs.Save.State 1) }}
 				{{ template "conversation" . }}
 			{{ else if (eq .gs.Save.State 2) }}
-				{{ template "misc" . }}
-			{{ else if (eq .gs.Save.State 3) }}
 				{{ template "battle" . }}
+			{{ else if (eq .gs.Save.State 3) }}
+				{{ template "skills" . }}
+			{{ else if (eq .gs.Save.State 4) }}
+				{{ template "inventory" . }}
+			{{ else if (eq .gs.Save.State 5) }}
+				{{ template "options" . }}
 			{{ end }}
 		</div>
 

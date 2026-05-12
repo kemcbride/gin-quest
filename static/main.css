@@ -40,6 +40,18 @@ body {
     margin: auto;
 }
 
+.skills {
+    margin: auto;
+}
+
+.inventory {
+    margin: auto;
+}
+
+.options {
+    margin: auto;
+}
+
 #convo-character {
     justify-content: center;
     width: 100%;

@@ -1,0 +1,26 @@
+{{ define "skills" }}
+
+{{ $skill := .gs.GetStrengthSkill }}
+<div class="skills">
+	SKILLS MENU
+	</br>
+	<table>
+		<tr>
+			<b>
+				<td> SKILL NAME </td>
+				<td> SKILL LEVEL </td>
+				<td> SKILL CAP </td>
+				<td> SKILL DESCRIPTION </td>
+			</b>
+		</tr>
+		<tr>
+			<td> {{ $skill.Name }} </td>
+			<td> 0 </td>
+			<td> {{ $skill.Cap }} </td>
+			<td> {{ $skill.Description }} </td>
+		</tr>
+	</table>
+	</br>
+	<a href=".?move">Return to map?</a>
+</div>
+{{ end }}
