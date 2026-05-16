@@ -1,0 +1,8 @@
+services:
+  gin-quest:
+    image: ghcr.io/kemcbride/gin-quest:kemcbride-gin-quest-latest
+    pull_policy: always
+    platform: linux/arm64
+    ports:
+      - 8080:8080
+
