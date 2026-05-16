@@ -22,7 +22,7 @@ var server embed.FS
 var favicons embed.FS
 
 const cookieAge int = 3600 * 24 * 7 // 1 week?
-var domain string = "kemcbride.noho.st"
+var domain string = "ginquest.kemcbride.noho.st"
 
 func NewGame(c *gin.Context) {
 	c.HTML(http.StatusOK, "newgame", gin.H{})
