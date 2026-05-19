@@ -1,24 +1,36 @@
 {{ define "skills" }}
 
-{{ $skill := .gs.GetStrengthSkill }}
+{{ $saveSkillLevels := .gs.Save.GetSkillLevels }}
+{{ $unusedPoints := .gs.Save.GetUnusedSkillPoints }}
 <div class="skills">
-	SKILLS MENU
+	<h3> SKILLS </h3>
 	</br>
+
+	{{ if gt $unusedPoints 0 }}
+	{{ if gt $unusedPoints 1 }}
+	<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINTS * * *</b></span>
+	{{ else }}
+	<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINT * * *</b></span>
+	{{ end }}
+	</br>
+	</br>
+	{{ end }}
 	<table>
 		<tr>
-			<b>
-				<td> SKILL NAME </td>
-				<td> SKILL LEVEL </td>
-				<td> SKILL CAP </td>
-				<td> SKILL DESCRIPTION </td>
-			</b>
+			<td><b> NAME </b></td>
+			<td><b> LEVEL </b></td>
+			<td><b> MAX LEVEL </b></td>
+			<td><b> DESCRIPTION </b></td>
 		</tr>
+{{ range $name, $skill := .gs.GetSkills }}
+{{ $skilllevel := index $saveSkillLevels $name }}
 		<tr>
 			<td> {{ $skill.Name }} </td>
-			<td> 0 </td>
+			<td> {{ $skilllevel }} </td>
 			<td> {{ $skill.Cap }} </td>
 			<td> {{ $skill.Description }} </td>
 		</tr>
+{{ end }}
 	</table>
 	</br>
 	<a href=".?move">Return to map?</a>

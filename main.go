@@ -104,12 +104,13 @@ func handleNewGameSubmission(c *gin.Context) {
 	name := c.DefaultPostForm("name", "ProtagonistKougra")
 	// Update cookie data
 	gsave := &gamestate.GameSave{
-		X:       0,
-		Y:       0,
-		RoomKey: "mh04i224",
-		State:   0,
-		Level:   1,
-		Name:    name,
+		X:           0,
+		Y:           0,
+		RoomKey:     "mh04i224",
+		State:       0,
+		Level:       1,
+		Name:        name,
+		SkillLevels: gamestate.NewSkillLevels(),
 	}
 
 	// Initiialize a fresh game
