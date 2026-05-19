@@ -1,11 +1,16 @@
 {{ define "status" }}
+{{ $unusedPoints := .gs.Save.GetUnusedSkillPoints }}
 <div class="status">
 	<h2>GinQuest</h2>
 	Name: <b>{{ .gs.GetName }}</b> -~-~- Level: <b>{{ .gs.GetLevel }}</b> -~-~- {{ .gs.GetStatusBlurb }}
 	</br>
 	<a href=".?options">Options</a> |
+	{{ if gt $unusedPoints 0 }}
+	<b><a href=".?skills">Skills</a></b>|
+	{{ else }}
 	<a href=".?skills">Skills</a> |
-	<a href=".?inventory">inventory</a> |
+	{{ end }}
+	<a href=".?inventory">Inventory</a> |
 	Difficulty: Normal |
 	Experience: [~~~|-----]
 </div>

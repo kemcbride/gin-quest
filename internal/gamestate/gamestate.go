@@ -21,13 +21,13 @@ const (
 )
 
 type GameSave struct {
-	X       int    `json:"x"`
-	Y       int    `json:"y"`
-	RoomKey string `json:"roomkey"`
-	State   State  `json:"state"`
-	Level   int    `json:"level"`
-	Name    string `json:"name"`
-	// SkillLevels [string]int `json:"skilllevels"` // how do maps work???
+	X           int            `json:"x"`
+	Y           int            `json:"y"`
+	RoomKey     string         `json:"roomkey"`
+	State       State          `json:"state"`
+	Level       int            `json:"level"`
+	Name        string         `json:"name"`
+	SkillLevels map[string]int `json:"skilllevels"`
 }
 
 type GameState struct {
@@ -55,6 +55,10 @@ func GameSaveFromJson(b []byte) (*GameSave, error) {
 		return nil, fmt.Errorf("error loading gamesave from json: level cannot be <= 0, %d", gs.Level)
 	}
 	return gs, nil
+}
+
+func NewSkillLevels() map[string]int {
+	return skills.NewSkillLevels()
 }
 
 func (gs *GameState) ToJson() ([]byte, error) {
@@ -226,6 +230,26 @@ func (gs *GameState) PortalHere(x int, y int) bool {
 	return gs.Room.PortalHere(x, y)
 }
 
-func (gs *GameState) GetStrengthSkill() skills.Skill {
-	return skills.StrengthSkill
+func (gs *GameState) GetSkills() map[string]skills.Skill {
+	return skills.Skills
+}
+
+func (save *GameSave) GetSkillLevels() map[string]int {
+	return save.SkillLevels
+}
+
+func (save *GameSave) GetUnusedSkillPoints() int {
+	// Let's say every 5 levels (incl. level 1) you get 3 points
+	// and each level you get one otherwise
+	// so if you're level 15, you have 3 + 3 + 3 + 3 (1, 5, 10, 15)
+	// plus one for each other level (2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14)
+	// aka: 3x(lvl/5 +1) + (lvl - (lvl/5 - 1))
+	landmarkPoints := 3 * (save.Level/5 + 1)
+	normalPoints := save.Level - max((save.Level/5-1), 0) - 1
+	earnedPoints := landmarkPoints + normalPoints
+	usedPoints := 0
+	for _, skillLevel := range save.SkillLevels {
+		usedPoints += skillLevel
+	}
+	return max(earnedPoints-usedPoints, 0)
 }
