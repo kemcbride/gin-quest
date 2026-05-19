@@ -176,7 +176,7 @@ func main() {
 		})
 	})
 
-	r.POST("/newgame", handleNewGameSubmission)
+	r.POST("/gin-quest/newgame", handleNewGameSubmission)
 
 	r.GET("/gin-quest/newgame", NewGame)
 	r.GET("/gin-quest/game", Game)
