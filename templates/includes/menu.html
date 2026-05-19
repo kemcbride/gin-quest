@@ -31,14 +31,11 @@
 			↘
 		</div>
 	</div>
-	<div class="character">
-		<img src="./static/img/ginquestprotag-kougra0.1.png"></img>
-		{{ if (or (.gs.Room.NpcHere $xr $yr) (.gs.Room.PortalHere $xr $yr)) }}
-			<img src="./static/img/{{ .gs.GetGridLocImg $xr $yr }}"></img>
-		{{ end }}
-	</div>
+	</br>
 	<div class="description">
 		</br>
+		{{- .gs.GetCurrRoomDescription -}}
+		</br> </br>
 		{{ if .gs.Room.NpcHere $xr $yr }}
 			{{ $npcname := .gs.Room.GetNpcNameHere $xr $yr }}
 			You see {{ $npcname }} milling around here. <a href=".?talk">Talk?</a>
