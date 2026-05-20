@@ -234,6 +234,14 @@ func (gs *GameState) GetSkills() map[string]skills.Skill {
 	return skills.Skills
 }
 
+func (gs *GameState) AddSkillPoint(skillName string) int {
+	if gs.Save.GetUnusedSkillPoints() > 0 {
+		gs.Save.GetSkillLevels()[skillName] += 1
+		return 1
+	}
+	return 0
+}
+
 func (save *GameSave) GetSkillLevels() map[string]int {
 	return save.SkillLevels
 }

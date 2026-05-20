@@ -8,16 +8,26 @@
 
 	{{ if gt $unusedPoints 0 }}
 	{{ if gt $unusedPoints 1 }}
-	<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINTS * * *</b></span>
+		<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINTS * * *</b></span>
 	{{ else }}
-	<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINT * * *</b></span>
+		<span style="color:red"><b>* * *  YOU HAVE {{ $unusedPoints }} UNSPENT SKILL POINT * * *</b></span>
 	{{ end }}
-	</br>
-	</br>
+	</br> </br>
+	{{ if (and (ne .skillName "") (ne .skillName nil)) }}
+		<a href=".?skill={{ .skillName }}&confirm=true"><b>-- Spend a skillName point on {{ .skillName }}? -- </b></a>
+		</br> </br>
 	{{ end }}
+	{{ end }}
+
+
+
+
 	<table>
 		<tr>
 			<td><b> NAME </b></td>
+			{{ if gt $unusedPoints 0 }}
+			<td><b> LEVEL UP </b></td>
+			{{ end }}
 			<td><b> LEVEL </b></td>
 			<td><b> MAX LEVEL </b></td>
 			<td><b> DESCRIPTION </b></td>
@@ -26,6 +36,9 @@
 {{ $skilllevel := index $saveSkillLevels $name }}
 		<tr>
 			<td> {{ $skill.Name }} </td>
+			{{ if gt $unusedPoints 0 }}
+			<td><a href=".?skill={{ $name }}"><b>+1</b></a></td>
+			{{ end }}
 			<td> {{ $skilllevel }} </td>
 			<td> {{ $skill.Cap }} </td>
 			<td> {{ $skill.Description }} </td>
