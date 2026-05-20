@@ -60,7 +60,8 @@ func Game(c *gin.Context) {
 		gs.Save.State = gamestate.StateExplore
 	}
 
-	if gs.Save.State == gamestate.StateExplore {
+	switch gs.Save.State {
+	case gamestate.StateExplore:
 		// Handle Explore-based query options
 		// if the query involved a portal, try that before other motion:
 		if _, portal := c.GetQuery("portal"); portal {
@@ -77,10 +78,13 @@ func Game(c *gin.Context) {
 		} else if _, right := c.GetQuery("right"); right {
 			gs.MoveRight()
 		}
+	case gamestate.StateSkills:
+		skillName, _ := c.GetQuery("skill")
+		_, confirm := c.GetQuery("confirm")
+		if _, found := gs.Save.GetSkillLevels()[skillName]; found && confirm {
+			gs.AddSkillPoint(skillName)
+		}
 	}
-
-	// Always pass "say" through, though 99% of the time it'll be empty? Clunky, huh.
-	say, _ := c.GetQuery("say")
 
 	// Save the game state back
 	j, err := gs.Save.ToJson()
@@ -90,13 +94,19 @@ func Game(c *gin.Context) {
 	}
 	c.SetCookie("game", string(j), cookieAge, "/", domain, false, true)
 
+	say, _ := c.GetQuery("say")
+	skillName, _ := c.GetQuery("skill")
+	confirm, _ := c.GetQuery("confirm")
+
 	c.HTML(http.StatusOK, "game", gin.H{
-		"title":  "Game Page",
-		"room":   gs.GetCurrRoom(),
-		"gs":     &gs,
-		"xrange": gs.GetMapRange(gs.Save.X, 3),
-		"yrange": gs.GetMapRange(gs.Save.Y, 3),
-		"say":    say,
+		"title":     "Game Page",
+		"room":      gs.GetCurrRoom(),
+		"gs":        &gs,
+		"xrange":    gs.GetMapRange(gs.Save.X, 3),
+		"yrange":    gs.GetMapRange(gs.Save.Y, 3),
+		"say":       say,
+		"skillName": skillName,
+		"confirm":   confirm,
 	})
 }
 
