@@ -14,13 +14,10 @@
 	{{ end }}
 	</br> </br>
 	{{ if (and (ne .skillName "") (ne .skillName nil)) }}
-		<a href=".?skill={{ .skillName }}&confirm=true"><b>-- Spend a skillName point on {{ .skillName }}? -- </b></a>
+		<a href=".?skill={{ .skillName }}&confirm=true"><b>-- CONFIRM: Spend a skill point on {{ .skillName }}? -- </b></a>
 		</br> </br>
 	{{ end }}
 	{{ end }}
-
-
-
 
 	<table>
 		<tr>
