@@ -54,13 +54,24 @@ func Game(c *gin.Context) {
 		gs.Save.State = gamestate.StateInventory
 	}
 
-	if _, talk := c.GetQuery("talk"); talk {
-		_ = gs.Talk(server)
-	} else if _, move := c.GetQuery("move"); move { // If doing talk, don't do other motion actions
-		gs.Save.State = gamestate.StateExplore
+	// If we get this param, it means the player asked to enter a battle
+	if _, battle := c.GetQuery("battle"); battle {
+		gs.Save.State = gamestate.StateBattle
+	}
+
+	// If you are in a battle, you can't transition out via params.
+	if gs.Save.State != gamestate.StateBattle {
+		if _, talk := c.GetQuery("talk"); talk {
+			_ = gs.Talk(server)
+		} else if _, move := c.GetQuery("move"); move { // If doing talk, don't do other motion actions
+			gs.Save.State = gamestate.StateExplore
+		}
 	}
 
 	switch gs.Save.State {
+	case gamestate.StateBattle:
+		// Handle battle - call gamestate functions to pick enemy to fight, etc
+
 	case gamestate.StateExplore:
 		// Handle Explore-based query options
 		// if the query involved a portal, try that before other motion:

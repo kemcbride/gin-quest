@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/kemcbride/gin-quest/internal/combat"
 )
 
 type MapGrid = []string
@@ -194,4 +196,16 @@ func (r *Room) GetPortalNameHere(x int, y int) string {
 		return portal.Name
 	}
 	return ""
+}
+
+func (r *Room) GetEncounterEnemyNameHere(x int, y int) string {
+	// This is for battle encounters (the only kind of encounter to be had)
+	// First, check the area's encounter rates. Are there any for this location?
+	// Are we in an area?
+	// TODO
+	// If we're not in an area with encounters, then let's check if we are trying
+	// to fight an NPC, and if it has an enemy entry.
+	if npcName := r.GetNpcNameHere(x, y); npcName && combat.LoadEnemy { // "" is falsy
+
+	}
 }

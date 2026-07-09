@@ -36,6 +36,30 @@ func FromJson(b []byte) (*EnemyData, error) {
 	return ed, nil
 }
 
+func LoadEnemies(server embed.FS) EnemyData {
+	file, err := server.ReadFile("static/enemies.json")
+	if err != nil {
+		panic(err) // TODO lazy
+	}
+
+	var enemies EnemyData
+	err = json.Unmarshal(file, &enemiesJson)
+	if err != nil {
+		panic(err) // TODO lazy
+	}
+
+	return enemies
+}
+
+func LoadEnemy(server embed.FS, enemyName string) *CombatStats {
+	enemies := LoadEnemies(server)
+	enemyStats, ok := enemies[enemyName]
+	if !ok {
+		return nil
+	}
+	return enemies[enemyName]
+}
+
 func DeriveCombatStats(level int) (CombatStats, error) {
 	if level <= 0 {
 		return CombatStats{}, fmt.Errorf("invalid level <= 0 : %d", level)

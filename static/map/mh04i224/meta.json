@@ -16,5 +16,12 @@
 			"img": "ginquestlocation-town0.1.png"
 		}
 	],
-	"areas": []
+	"areas": [
+		{
+			"name": "Central Euniciar",
+			"coords": [
+				[ [-1, -1], [2, 2] ]
+			]
+		}
+	]
 }
